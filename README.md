@@ -1,64 +1,64 @@
 <p align="center"><a href="https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-latest.zip"><img src="assets/pixel-readme/download.webp" alt="直接下载压缩包" width="240"></a></p>
 
-[产品理念](#user-content-产品理念) · [功能介绍](#user-content-mathmodel-copilot-能帮你做什么) · [反馈与参与](#user-content-反馈与参与)
+[产品理念](#user-content-pixel-产品理念) · [功能介绍](#user-content-pixel-mathmodel-copilot-能帮你做什么) · [反馈与参与](#user-content-pixel-反馈与参与)
 
-<a name="mathmodel-copilot"></a>
+<a id="pixel-mathmodel-copilot" name="pixel-mathmodel-copilot"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/00-mobile.webp">
   <img src="assets/pixel-readme/00-desktop.webp" alt="MathModel Copilot" width="100%">
 </picture>
 
-<a name="下载后发给-ai-安装就能开始"></a>
+<a id="pixel-下载后发给-ai-安装就能开始" name="pixel-下载后发给-ai-安装就能开始"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/01-mobile.webp">
   <img src="assets/pixel-readme/01-desktop.webp" alt="下载后，发给 AI 安装就能开始" width="100%">
 </picture>
 
-<a name="产品理念"></a>
+<a id="pixel-产品理念" name="pixel-产品理念"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/02-mobile.webp">
   <img src="assets/pixel-readme/02-desktop.webp" alt="产品理念" width="100%">
 </picture>
 
-<a name="mathmodel-copilot-能帮你做什么"></a>
+<a id="pixel-mathmodel-copilot-能帮你做什么" name="pixel-mathmodel-copilot-能帮你做什么"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/03-mobile.webp">
   <img src="assets/pixel-readme/03-desktop.webp" alt="MathModel Copilot 能帮你做什么？" width="100%">
 </picture>
 
-<a name="①-从审题到交付让-ai-持续参与整场比赛"></a>
+<a id="pixel-①-从审题到交付让-ai-持续参与整场比赛" name="pixel-①-从审题到交付让-ai-持续参与整场比赛"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/04-mobile.webp">
   <img src="assets/pixel-readme/04-desktop.webp" alt="① 从审题到交付，让 AI 持续参与整场比赛" width="100%">
 </picture>
 
-<a name="②-把思路讲透让人有依据地判断与选择"></a>
+<a id="pixel-②-把思路讲透让人有依据地判断与选择" name="pixel-②-把思路讲透让人有依据地判断与选择"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/05-mobile.webp">
   <img src="assets/pixel-readme/05-desktop.webp" alt="② 把思路讲透，让人有依据地判断与选择" width="100%">
 </picture>
 
-<a name="③-把版本状态和重复检查交给系统"></a>
+<a id="pixel-③-把版本状态和重复检查交给系统" name="pixel-③-把版本状态和重复检查交给系统"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/06-mobile.webp">
   <img src="assets/pixel-readme/06-desktop.webp" alt="③ 把版本、状态和重复检查交给系统" width="100%">
 </picture>
 
-<a name="④-真实计算独立核验让结果有据可查"></a>
+<a id="pixel-④-真实计算独立核验让结果有据可查" name="pixel-④-真实计算独立核验让结果有据可查"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/07-mobile.webp">
   <img src="assets/pixel-readme/07-desktop.webp" alt="④ 真实计算、独立核验，让结果有据可查" width="100%">
 </picture>
 
-<a name="⑤-通过共享项目资料让人ai-和队员协作起来"></a>
+<a id="pixel-⑤-通过共享项目资料让人ai-和队员协作起来" name="pixel-⑤-通过共享项目资料让人ai-和队员协作起来"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/08-mobile.webp">
@@ -67,49 +67,49 @@
 
 [GitHub 协作说明](docs/GIT_COLLABORATION.md)
 
-<a name="⑥-建模工作台直观看到项目进展与-ai-反馈"></a>
+<a id="pixel-⑥-建模工作台直观看到项目进展与-ai-反馈" name="pixel-⑥-建模工作台直观看到项目进展与-ai-反馈"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/09-mobile.webp">
   <img src="assets/pixel-readme/09-desktop.webp" alt="⑥ 建模工作台：直观看到项目进展与 AI 反馈" width="100%">
 </picture>
 
-<a name="⑦-辅助论文写作把思路和结果讲清楚"></a>
+<a id="pixel-⑦-辅助论文写作把思路和结果讲清楚" name="pixel-⑦-辅助论文写作把思路和结果讲清楚"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/10-mobile.webp">
   <img src="assets/pixel-readme/10-desktop.webp" alt="⑦ 辅助论文写作，把思路和结果讲清楚" width="100%">
 </picture>
 
-<a name="⑧-提交前核对材料减少遗漏和版本混用"></a>
+<a id="pixel-⑧-提交前核对材料减少遗漏和版本混用" name="pixel-⑧-提交前核对材料减少遗漏和版本混用"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/11-mobile.webp">
   <img src="assets/pixel-readme/11-desktop.webp" alt="⑧ 提交前核对材料，减少遗漏和版本混用" width="100%">
 </picture>
 
-<a name="⑨-教学模式带你把这个-skill-用起来"></a>
+<a id="pixel-⑨-教学模式带你把这个-skill-用起来" name="pixel-⑨-教学模式带你把这个-skill-用起来"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/12-mobile.webp">
   <img src="assets/pixel-readme/12-desktop.webp" alt="⑨ 教学模式，带你把这个 Skill 用起来" width="100%">
 </picture>
 
-<a name="⑩-留下经验和偏好让下一次用得更顺手"></a>
+<a id="pixel-⑩-留下经验和偏好让下一次用得更顺手" name="pixel-⑩-留下经验和偏好让下一次用得更顺手"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/13-mobile.webp">
   <img src="assets/pixel-readme/13-desktop.webp" alt="⑩ 留下经验和偏好，让下一次用得更顺手" width="100%">
 </picture>
 
-<a name="⑪-ai-帮你写反馈并提交-github-issue"></a>
+<a id="pixel-⑪-ai-帮你写反馈并提交-github-issue" name="pixel-⑪-ai-帮你写反馈并提交-github-issue"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/14-mobile.webp">
   <img src="assets/pixel-readme/14-desktop.webp" alt="⑪ AI 帮你写反馈，并提交 GitHub Issue" width="100%">
 </picture>
 
-<a name="关于当前版本"></a>
+<a id="pixel-关于当前版本" name="pixel-关于当前版本"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/15-mobile.webp">
@@ -118,14 +118,14 @@
 
 [本轮验收记录](docs/ACCEPTANCE_V032.md)
 
-<a name="反馈与参与"></a>
+<a id="pixel-反馈与参与" name="pixel-反馈与参与"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/16-mobile.webp">
   <img src="assets/pixel-readme/16-desktop.webp" alt="反馈与参与" width="100%">
 </picture>
 
-<a name="使用文档"></a>
+<a id="pixel-使用文档" name="pixel-使用文档"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/17-mobile.webp">
@@ -134,7 +134,7 @@
 
 [安装指南](https://github.com/Odyphus/MathModel-Copilot/blob/main/docs/INSTALL.md) · [使用说明](https://github.com/Odyphus/MathModel-Copilot/blob/main/docs/EXPERIENCE_V03.md) · [GitHub 协作说明](https://github.com/Odyphus/MathModel-Copilot/blob/main/docs/GIT_COLLABORATION.md) · [工作台交互说明](https://github.com/Odyphus/MathModel-Copilot/blob/main/docs/LOCAL_INTERACTION.md) · [使用反馈说明](https://github.com/Odyphus/MathModel-Copilot/blob/main/docs/USAGE_FEEDBACK.md) · [产品术语](https://github.com/Odyphus/MathModel-Copilot/blob/main/docs/PRODUCT_LANGUAGE.md) · [贡献指南](https://github.com/Odyphus/MathModel-Copilot/blob/main/CONTRIBUTING.md) · [变更记录](https://github.com/Odyphus/MathModel-Copilot/blob/main/CHANGELOG.md) · [安全问题反馈方式](https://github.com/Odyphus/MathModel-Copilot/blob/main/SECURITY.md)
 
-<a name="项目来源与贡献"></a>
+<a id="pixel-项目来源与贡献" name="pixel-项目来源与贡献"></a>
 
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/18-mobile.webp">
