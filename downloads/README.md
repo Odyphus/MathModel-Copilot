@@ -1,6 +1,6 @@
 # 0.3 Preview 运行包
 
-下载 [MathModel-Copilot-v0.3-Preview.zip](MathModel-Copilot-v0.3-Preview.zip)，在 GitHub 文件页点击 Download raw file。把包交给能操作本机文件的 AI，请它安装唯一的 mathmodel-copilot Skill；已有安装不覆盖。
+点击 [直接下载 MathModel-Copilot-v0.3-Preview.zip](https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-v0.3-Preview.zip)，下载后把包交给能操作本机文件的 AI，请它安装唯一的 mathmodel-copilot Skill；已有安装不覆盖。若图片按钮未显示，也可使用这个文字链接。
 
 这是 2026-10-07 已验收的冻结运行包（0.3.0-preview.1），233 个产品文件、一个 Skill 入口。文件与本地交付逐字节相同；校验值见 [SHA256SUMS.txt](SHA256SUMS.txt)。本目录不包含开发源码 ZIP，源码即当前仓库。
 

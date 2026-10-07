@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="344" height="64" viewBox="0 0 344 64" role="img" aria-labelledby="title desc">
+  <title id="title">快速下载 MathModel Copilot Skill</title>
+  <desc id="desc">下载 0.3 Preview 运行包，发给 AI 安装</desc>
+  <rect width="344" height="64" rx="12" fill="#205B46"/>
+  <g stroke="#FFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M32 18v21m-8-8 8 8 8-8M20 42v7h24v-7"/>
+  </g>
+  <text x="62" y="29" fill="#FFF" font-family="system-ui, sans-serif" font-size="19" font-weight="700">快速下载 Skill</text>
+  <text x="62" y="49" fill="#DCEDE5" font-family="system-ui, sans-serif" font-size="12">0.3 Preview · 下载后发给 AI 安装</text>
+</svg>
