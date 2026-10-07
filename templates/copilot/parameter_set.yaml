@@ -1,0 +1,17 @@
+schema_version: "1.0"
+parameter_set_id: null
+stable_id: null
+question: null
+spec_id: null
+modelspec_semantic_hash: null
+modelspec_record_hash: null
+version: 1
+status: frozen
+source_table: null
+source_table_sha256: null
+created_at: null
+created_by: []
+entries: []
+sensitivity_records: []
+semantic_hash: null
+record_hash: null

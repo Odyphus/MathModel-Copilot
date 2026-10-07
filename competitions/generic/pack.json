@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1",
+  "id": "generic",
+  "name": "Generic Mathematical Modeling Competition",
+  "version": "0.1.0",
+  "aliases": ["custom"],
+  "rules_year": null,
+  "rules_status": "unverified",
+  "official_sources": [],
+  "rules": {},
+  "required_checks": ["rules_verified"],
+  "resources": {"rules_guide": "current_rules.md", "paper_skeleton": "paper_skeleton.md"}
+}

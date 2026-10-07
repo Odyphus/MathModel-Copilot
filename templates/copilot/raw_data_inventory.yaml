@@ -1,0 +1,13 @@
+schema_version: "1.0"
+stable_id: null
+artifact_type: RawDataInventory
+question: Q1
+entries:
+  - path: data/source.xlsx
+    byte_size: null
+    mtime_ns: null
+    sha256: null
+    read_only_contract: true
+created_at: null
+semantic_hash: null
+record_hash: null

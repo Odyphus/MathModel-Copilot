@@ -1,0 +1,27 @@
+{
+  "schema_version": "0.1",
+  "id": "mcm",
+  "name": "MCM / ICM",
+  "version": "0.1.0",
+  "aliases": ["mcm-icm", "icm"],
+  "rules_year": 2027,
+  "rules_status": "baseline",
+  "official_sources": [
+    {"id": "instructions", "url": "https://www.contest.comap.com/undergraduate/contests/mcm/instructions.php", "origin": "official_rule", "rules_year": 2027, "required_for_lock": true, "checked_at": "2026-10-05"}
+  ],
+  "rules": {
+    "paper_formats": {"value": ["pdf"], "origin": "official_rule", "source_ids": ["instructions"]},
+    "paper_max_bytes": {"value": 25000000, "comparison": "lt", "origin": "maintainer_default", "source_ids": ["instructions"], "note": "官方要求小于25 MB；采用十进制25,000,000 bytes作为工具默认换算。"},
+    "solution_max_pages": {"value": 25, "origin": "official_rule", "source_ids": ["instructions"]},
+    "language": {"value": "en", "origin": "official_rule", "source_ids": ["instructions"]},
+    "minimum_font_size_pt": {"value": 12, "origin": "official_rule", "source_ids": ["instructions"]},
+    "first_page": {"value": "summary_sheet", "origin": "official_rule", "source_ids": ["instructions"]},
+    "page_header": {"value": ["team_control_number", "page_number"], "origin": "official_rule", "source_ids": ["instructions"]},
+    "ai_report_position": {"value": "after_solution", "origin": "official_rule", "source_ids": ["instructions"]},
+    "ai_report_counted_in_page_limit": {"value": false, "origin": "official_rule", "source_ids": ["instructions"]},
+    "separate_support_archive": {"value": false, "origin": "official_rule", "source_ids": ["instructions"]},
+    "anonymity": {"value": true, "origin": "official_rule", "source_ids": ["instructions"]}
+  },
+  "required_checks": ["rules_verified", "anonymity_passed", "page_limit_passed", "ai_disclosure_passed", "supporting_materials_passed"],
+  "resources": {"rules_guide": "current_rules.md", "paper_skeleton": "paper_skeleton.md", "rubric_overlay": "rubric_overlay.json"}
+}

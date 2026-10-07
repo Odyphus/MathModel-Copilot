@@ -1,0 +1,19 @@
+{
+  "_doc": "Phase 10 验证 fixture: mcm 加载 smoke. stage 3 评分, task_type=A_continuous. 验证 score_artifact.py 加载 competitions/mcm/rubric_overlay.json + dim_weights.json[mcm][A_continuous] 不报错.",
+  "_test_target": "score_artifact.py load_competition_config + validate_critique",
+  "_expected_outcome": "validate ok, verdict=pass (weighted mean >= 8)",
+  "stage_id": 3,
+  "iteration": 0,
+  "variant": "stage_level",
+  "scores": {
+    "1_candidate_diversity": {"score": 8, "evidence": "A classical baseline and one structurally different alternative cover the plausible mechanisms; no third model was forced."},
+    "2_selection_rationale": {"score": 8, "evidence": "Each considered model has a problem-fit argument, a falsifier, and a recorded rejection or selection reason."},
+    "3_naming_variant": {"score": 9, "evidence": "The model name describes the actual time-varying constraint and makes no unsupported novelty claim."},
+    "4_solver_feasibility": {"score": 8, "evidence": "The required solver is available and a representative instance completed within the stage budget."},
+    "5_literature_support": {"score": 8, "evidence": "The formulation and key assumptions trace to the sources actually used."}
+  },
+  "min_score": 8,
+  "mean_score": 8.2,
+  "issues": [],
+  "verdict": "pass"
+}

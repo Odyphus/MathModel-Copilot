@@ -1,0 +1,64 @@
+{
+  "_doc": "MCM/ICM 题号与 task_type 路由提示。Problem category 可帮助初始分流，但交付物与子问数必须从当届题面重新提取。SEED v0.2。",
+  "_seed_version": "0.2",
+  "_seed_source": "COMAP problem categories；不包含官方数值评分或子问数统计",
+  "competition": "mcm",
+  "official_name": "Mathematical / Interdisciplinary Contest in Modeling",
+  "duration_h": 96,
+  "team_size": 3,
+  "language": "en",
+  "compiler": "pdflatex",
+  "default_subproblem_count": null,
+  "subproblem_count_iqr": null,
+  "topics": {
+    "A": {
+      "label": "MCM Problem A",
+      "category": "Continuous",
+      "primary_type": "continuous_modeling",
+      "task_type_key": "A_continuous",
+      "typical_problems": ["PDE / ODE 系统", "物理建模", "流体 / 热传导"],
+      "expected_subproblem_count": null
+    },
+    "B": {
+      "label": "MCM Problem B",
+      "category": "Discrete",
+      "primary_type": "discrete_optimization",
+      "task_type_key": "B_discrete",
+      "typical_problems": ["组合优化", "图论", "调度"],
+      "expected_subproblem_count": null
+    },
+    "C": {
+      "label": "MCM Problem C",
+      "category": "Data Insights",
+      "primary_type": "data_analysis",
+      "task_type_key": "C_data",
+      "typical_problems": ["大数据分析", "预测", "机器学习"],
+      "expected_subproblem_count": null
+    },
+    "D": {
+      "label": "ICM Problem D",
+      "category": "Operations Research / Network Science",
+      "primary_type": "network_or_systems",
+      "task_type_key": "D_network",
+      "typical_problems": ["网络流", "供应链", "运筹"],
+      "expected_subproblem_count": null
+    },
+    "E": {
+      "label": "ICM Problem E",
+      "category": "Sustainability / Environmental",
+      "primary_type": "interdisciplinary",
+      "task_type_key": "E_interdisciplinary",
+      "typical_problems": ["环境建模", "可持续性", "跨学科"],
+      "expected_subproblem_count": null
+    },
+    "F": {
+      "label": "ICM Problem F",
+      "category": "Policy",
+      "primary_type": "policy_modeling",
+      "task_type_key": "F_policy",
+      "typical_problems": ["公共政策", "社会问题", "成本效益"],
+      "expected_subproblem_count": null,
+      "_note": "是否要求 Memo / Letter 只由当前题目决定，不按题号硬编码。"
+    }
+  }
+}

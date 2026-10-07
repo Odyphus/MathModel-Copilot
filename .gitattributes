@@ -1,0 +1,4 @@
+# Preserve the verified snapshot's bytes, including existing Windows line endings.
+# Normalize line endings only in a deliberate, separately validated change.
+* -text
+* whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

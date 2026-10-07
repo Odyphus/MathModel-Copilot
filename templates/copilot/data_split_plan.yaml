@@ -1,0 +1,19 @@
+schema_version: "1.0"
+stable_id: null
+artifact_type: DataSplitPlan
+question: Q1
+applicability: applicable
+not_applicable_reason: null
+strategy: grouped_cross_validation
+split_unit: null
+group_keys: []
+time_order_field: null
+preprocessing_scope: train_fold_only
+# Optional preprocessing_steps: omit for legacy compatibility; see references/model-evidence.md.
+leakage_controls: []
+random_seed: null
+train_entities: []
+test_entities: []
+created_at: null
+semantic_hash: null
+record_hash: null

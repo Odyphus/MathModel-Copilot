@@ -1,0 +1,1 @@
+parameter_id,symbol,meaning,unit,category,subcategory,current_value,candidate_range,distribution,basis,estimation_method,data_scope,external_source,literature_source_ids,uncertainty,formula_ids,code_variable,code_location,affects_core_conclusion,sensitivity_required,sensitivity_plan,sensitivity_status,sensitivity_result,boundary_hit,boundary_resolution,derived_from

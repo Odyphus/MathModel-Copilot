@@ -1,0 +1,162 @@
+{
+  "change": {
+    "capacity_before": 0.8,
+    "capacity_after": 0.7,
+    "unit": "vehicle/s"
+  },
+  "transaction": {
+    "revision": 23,
+    "result": {
+      "object_id": "params.Q1@2",
+      "status": "frozen"
+    }
+  },
+  "status": {
+    "revision": 23,
+    "requirements": {
+      "total": 5,
+      "verified": 0,
+      "missing": [
+        "REQ-Q1-001",
+        "REQ-Q1-002",
+        "REQ-Q1-003",
+        "REQ-Q1-004",
+        "REQ-Q1-005"
+      ],
+      "questions": {
+        "Q1": "missing"
+      },
+      "rows": [
+        {
+          "id": "REQ-Q1-001",
+          "question": "Q1",
+          "status": "missing",
+          "missing_outputs": [
+            "control_objective"
+          ],
+          "contract_current": true
+        },
+        {
+          "id": "REQ-Q1-002",
+          "question": "Q1",
+          "status": "missing",
+          "missing_outputs": [
+            "control_comparison"
+          ],
+          "contract_current": true
+        },
+        {
+          "id": "REQ-Q1-003",
+          "question": "Q1",
+          "status": "missing",
+          "missing_outputs": [
+            "signal_timing"
+          ],
+          "contract_current": true
+        },
+        {
+          "id": "REQ-Q1-004",
+          "question": "Q1",
+          "status": "missing",
+          "missing_outputs": [
+            "scenario_sensitivity"
+          ],
+          "contract_current": true
+        },
+        {
+          "id": "REQ-Q1-005",
+          "question": "Q1",
+          "status": "missing",
+          "missing_outputs": [
+            "technical_summary"
+          ],
+          "contract_current": true
+        }
+      ],
+      "complete": false
+    },
+    "current_task": {
+      "id": "T-MCM-technical-summary",
+      "title": "复核模型适用边界并撰写面向工程人员的技术摘要",
+      "role": "writer",
+      "dependencies": [
+        "result.Q1.RUN-0b104e18645645e3@1"
+      ],
+      "requirements": [
+        "REQ-Q1-005"
+      ],
+      "status": "blocked",
+      "outputs": [],
+      "blocker": "params.Q1@1 被 params.Q1@2 取代"
+    },
+    "current_objects": {
+      "problem.Q1": "problem.Q1@1",
+      "model.Q1": "model.Q1@1",
+      "params.Q1": "params.Q1@2",
+      "data.Q1": "data.Q1@1",
+      "code.Q1": "code.Q1@1",
+      "plan.Q1": "plan.Q1@1"
+    },
+    "stale_objects": {
+      "params.Q1@1": [
+        "对象不是当前版本: params.Q1@1",
+        "params.Q1@1: stale"
+      ],
+      "RUN-0b104e18645645e3@1": [
+        "RUN-0b104e18645645e3@1: stale",
+        "对象不是当前版本: params.Q1@1",
+        "params.Q1@1: stale"
+      ],
+      "CHECK-094443f1210145ce@1": [
+        "CHECK-094443f1210145ce@1: stale",
+        "RUN-0b104e18645645e3@1: stale",
+        "对象不是当前版本: params.Q1@1",
+        "params.Q1@1: stale"
+      ],
+      "result.Q1.RUN-0b104e18645645e3@1": [
+        "result.Q1.RUN-0b104e18645645e3@1: stale",
+        "RUN-0b104e18645645e3@1: stale",
+        "对象不是当前版本: params.Q1@1",
+        "params.Q1@1: stale",
+        "CHECK-094443f1210145ce@1: stale"
+      ],
+      "CLAIM-MCM@1": [
+        "CLAIM-MCM@1: stale",
+        "result.Q1.RUN-0b104e18645645e3@1: stale",
+        "RUN-0b104e18645645e3@1: stale",
+        "对象不是当前版本: params.Q1@1",
+        "params.Q1@1: stale",
+        "CHECK-094443f1210145ce@1: stale"
+      ],
+      "paper.Q1@1": [
+        "paper.Q1@1: stale",
+        "CLAIM-MCM@1: stale",
+        "result.Q1.RUN-0b104e18645645e3@1: stale",
+        "RUN-0b104e18645645e3@1: stale",
+        "对象不是当前版本: params.Q1@1",
+        "params.Q1@1: stale",
+        "CHECK-094443f1210145ce@1: stale"
+      ]
+    },
+    "blockers": [
+      "Q1 未完成",
+      "RUN-0b104e18645645e3@1 待重检",
+      "CHECK-094443f1210145ce@1 待重检",
+      "result.Q1.RUN-0b104e18645645e3@1 待重检",
+      "CLAIM-MCM@1 待重检",
+      "paper.Q1@1 待重检"
+    ],
+    "next_action": "Q1 未完成",
+    "submission": {
+      "ready": false,
+      "state": "generated",
+      "blockers": [
+        "No current passing delivery audit",
+        "Historical/research checks are not formal submission readiness",
+        "Package has not entered awaiting_submission"
+      ],
+      "audit_id": null,
+      "package_id": null
+    }
+  }
+}

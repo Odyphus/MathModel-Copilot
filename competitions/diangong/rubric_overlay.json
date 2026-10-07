@@ -1,0 +1,65 @@
+{
+  "_doc": "电工杯特化评分维度 overlay。SEED v0.2；基于当前官方格式要求与维护者工程复核启发，无官方数值权重或获奖语料统计。",
+  "_seed_version": "0.2",
+  "competition": "diangong",
+  "version": "0.2",
+  "dim_whitelist": {
+    "_doc": "覆盖默认 DIM_WHITELIST. 电工杯 stage 8 强调工程实用 / 物理意义 / 数据完整, 与 cumcm 通用写作 5 维不同.",
+    "8": ["1_abstract_4_paragraph", "2_engineering_practicality", "3_physical_meaning", "4_data_completeness", "5_visual_engineering"]
+  },
+  "stage_overrides": {
+    "5": {
+      "_note": "题面包含较多或强依赖子问时，按真实依赖与剩余时间监控预算，不按历史印象预设 qi_count",
+      "dims": {
+        "5_time_budget": {
+          "describe": "按题目依赖与剩余时间分配每个 Qi 的预算；超时时记录 carryover，不使用固定 1.5h 作为通用规则"
+        }
+      }
+    },
+    "8": {
+      "_note": "电工杯 stage 8: 工程实用性 + 物理意义 + 数据完整性 优先",
+      "dims": {
+        "1_abstract_4_paragraph": {
+          "describe": "摘要覆盖背景、方法、可追溯结果与工程含义；无样本统计，不设固定段数或字数门槛"
+        },
+        "2_engineering_practicality": {
+          "describe": "推荐方案需说清'工程上可否实现 + 落地代价', 不能只是数学最优",
+          "weight_hint": 1.5
+        },
+        "3_physical_meaning": {
+          "describe": "数值结果必须翻译回电力 / 能源工程语义 (kW, kWh, 损耗率, 弃风率等)",
+          "weight_hint": 1.4
+        },
+        "4_data_completeness": {
+          "describe": "关键字段进入证据链；未使用字段必须说明与目标、质量或冗余相关的取舍理由",
+          "weight_hint": 1.3
+        },
+        "5_visual_engineering": {
+          "describe": "图表用工程惯用形式 (单线图 / 时序曲线 / 等高线 / 玫瑰图), 不滥用机器学习配图"
+        }
+      }
+    },
+    "9": {
+      "_note": "电工杯终审: 工程师视角可读 + 数据全用 + 物理意义",
+      "dims": {
+        "1_anti_pattern_coverage": {
+          "describe": "对照 competitions/diangong/anti_patterns.md 逐条核查"
+        }
+      }
+    }
+  },
+  "panel_personas": [
+    {"id": "engineering",     "label": "电力工程师视角", "weight": 1.5, "focus": "工程实用 + 物理意义 + 落地代价"},
+    {"id": "data_analyst",    "label": "数据分析视角",   "weight": 1.2, "focus": "字段取舍有据 + 预处理 + 特征可追溯"},
+    {"id": "math_rigor",      "label": "数学严谨视角",   "weight": 1.0, "focus": "公式 + 收敛"},
+    {"id": "writing_clarity", "label": "写作呈现视角",   "weight": 0.9, "focus": "中文流畅 + 图表"},
+    {"id": "judge_30s",       "label": "评委 30 秒视角", "weight": 1.4, "focus": "摘要 + 结果图 + 工程建议"}
+  ],
+  "anti_pattern_path": "competitions/diangong/anti_patterns.md",
+  "phrase_bank_path": "competitions/diangong/phrase_bank.md",
+  "winning_patterns_path": "competitions/diangong/winning_patterns.md",
+  "abstract_template_path": "competitions/diangong/abstract_template.md",
+  "paper_skeleton_path": "competitions/diangong/paper_skeleton.md",
+  "latex_template_dir": "templates/latex/diangong",
+  "citation_format": "GB/T 7714"
+}

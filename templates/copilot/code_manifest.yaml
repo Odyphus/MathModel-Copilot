@@ -1,0 +1,18 @@
+schema_version: "1.0"
+record_type: code_manifest
+stable_id: CODE-Q1-v1
+question: Q1
+spec_id: MS-Q1-v1
+modelspec_semantic_hash: null
+revision_id: code-q1-v1
+git_commit: null
+files:
+  - path: code/q1.py
+    sha256: null
+    byte_size: null
+environment_lock:
+  path: requirements-lock.txt
+  sha256: null
+notes: null
+semantic_hash: null
+record_hash: null

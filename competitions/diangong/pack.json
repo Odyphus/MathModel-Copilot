@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1",
+  "id": "diangong",
+  "name": "电工杯数学建模竞赛",
+  "version": "0.1.0",
+  "aliases": [],
+  "rules_year": 2026,
+  "rules_status": "baseline",
+  "official_sources": [
+    {"id": "participation", "url": "https://shumo.neepu.edu.cn/jszz/csgz.htm", "origin": "official_rule", "rules_year": 2026, "required_for_lock": true, "checked_at": "2026-07-22", "note": "继承上游核对日期；本轮未重新核对官网，不等同项目当届规则锁。"},
+    {"id": "format", "url": "https://shumo.neepu.edu.cn/jszz/lwgf.htm", "origin": "official_rule", "rules_year": 2026, "required_for_lock": true, "checked_at": "2026-07-22", "note": "继承2026官网基线，规范正文标注2024修订稿；项目需保存实际适用快照。"}
+  ],
+  "rules": {
+    "paper_formats": {"value": ["pdf", "docx"], "origin": "official_rule", "source_ids": ["format"]},
+    "support_formats": {"value": ["zip", "rar"], "origin": "official_rule", "source_ids": ["format"]},
+    "support_max_bytes": {"value": 20000000, "comparison": "lte", "origin": "maintainer_default", "source_ids": ["format"], "note": "官方20MB上限按十进制字节换算；属于工具默认约定。"},
+    "main_text_max_pages": {"value": 25, "origin": "official_rule", "source_ids": ["format"]},
+    "first_page": {"value": "cover", "origin": "official_rule", "source_ids": ["format"]},
+    "table_of_contents": {"value": false, "origin": "official_rule", "source_ids": ["format"]},
+    "ai_policy": {"value": "not_specified_in_inherited_baseline", "origin": "maintainer_default", "source_ids": ["participation", "format"], "note": "未发现专用披露格式不表示允许、禁止或免披露；需核对当届新增通知。"},
+    "anonymity": {"value": true, "origin": "official_rule", "source_ids": ["participation", "format"]}
+  },
+  "required_checks": ["rules_verified", "anonymity_passed", "page_limit_passed", "ai_disclosure_passed", "supporting_materials_passed"],
+  "resources": {"rules_guide": "current_rules.md", "paper_skeleton": "paper_skeleton.md", "rubric_overlay": "rubric_overlay.json"}
+}

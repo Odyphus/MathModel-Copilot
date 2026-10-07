@@ -1,0 +1,16 @@
+{
+  "_doc": "电工杯 empirical placeholder. No paper corpus has been measured, so no synthetic percentiles are provided. Official constraints live in current_rules.md.",
+  "_seed_version": "0.2",
+  "competition": "diangong",
+  "source": {
+    "papers_total": 0,
+    "papers_extracted": 0,
+    "year_range": null,
+    "baked_at": null,
+    "baker": null,
+    "status": "seed_no_corpus"
+  },
+  "dims": {},
+  "quality_signals": {},
+  "_usage": "Do not create page, word, figure, formula, reference, subproblem, or award thresholds without a provenance-reviewed corpus and extraction QA."
+}

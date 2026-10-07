@@ -1,0 +1,4 @@
+interface:
+  display_name: "MathModel Copilot｜数学建模助手"
+  short_description: "辅助审题、比较建模方案、计算与检查，整理论文材料和任务交接"
+  default_prompt: "Use $mathmodel-copilot to guide my team from problem selection through evidence review and submission audit."

@@ -1,0 +1,67 @@
+name: Candidate checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.10", "3.12"]
+    env:
+      MPLBACKEND: Agg
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install optional regression and build dependencies
+        run: python -m pip install ".[test,build]"
+      - name: Run preserved regression tests
+        run: python tools/run_regression.py --output ../regression-evidence
+      - name: Run competition resource preflights
+        run: |
+          python scripts/doctor.py --competition cumcm --skip-tools
+          python scripts/doctor.py --competition mcm --skip-tools
+          python scripts/doctor.py --competition diangong --skip-tools
+      - name: Make local source review package
+        run: python tools/build_release.py --output ../release-review
+      - name: Verify fresh-unzip wheel and sdist installation, use and uninstall
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess, sys
+          archives = list(Path("../release-review").glob("*-source-review.zip"))
+          if len(archives) != 1:
+              raise RuntimeError("Expected exactly one newly built review archive")
+          subprocess.run([sys.executable, "tools/verify_install.py", "--archive", str(archives[0]), "--output", "../install-evidence", "--work-dir", "../install-work"], check=True)
+      - name: State historical fixture boundary
+        shell: python
+        run: |
+          from pathlib import Path
+          Path("historical-boundary.txt").write_text("Full CUMCM historical integration is not executed by this public-fixture-free job. It requires separately authorized official fixtures plus the historical extra. Missing fixture-dependent tests are recorded as skipped, never full acceptance. See docs/HISTORICAL_FIXTURES.md.\n", encoding="utf-8")
+      - name: Preserve actual logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-${{ matrix.os }}-${{ matrix.python-version }}
+          path: |
+            ../regression-evidence/
+            ../install-evidence/
+            ../release-review/
+            historical-boundary.txt
+
+  # No upload-to-PyPI, Release creation, push, or external publication job.
+  # A CI file alone is not execution evidence. An actual completed run is required.

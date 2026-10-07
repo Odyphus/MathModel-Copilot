@@ -1,0 +1,59 @@
+{
+  "_doc": "MCM/ICM 美赛特化评分维度 overlay。SEED v0.2；把 COMAP 当前规则与公开评审关注点映射为维护者检查维度，不是官方数值评分阈值。",
+  "_seed_version": "0.2",
+  "competition": "mcm",
+  "version": "0.2",
+  "dim_whitelist": {
+    "_doc": "覆盖默认 DIM_WHITELIST. 仅列出与 cumcm baseline 不同的 stage. 数量必须正好 5.",
+    "8": ["1_one_page_summary", "2_section_completeness", "3_communication_clarity", "4_novel_approach", "5_reproducibility"]
+  },
+  "stage_overrides": {
+    "8": {
+      "_note": "美赛 stage 8: Summary Sheet + 完整证据链 + 题目明确要求的特殊交付物 + 全英文",
+      "dims": {
+        "1_one_page_summary": {
+          "describe": "Summary Sheet 在第一页，简洁覆盖 problem context / approach / key results / verification / limitations；不设仓库自创字数下限",
+          "_seed_basis": "COMAP rubric: 'Concise summary that captures problem, approach, results'"
+        },
+        "2_section_completeness": {
+          "describe": "问题、假设、符号、模型、结果、验证、局限、结论与引用形成完整证据链；Letter/Memo 仅在当前题目要求时加入"
+        },
+        "3_communication_clarity": {
+          "describe": "技术写作清晰、图表自解释、术语精确；以当前 COMAP 说明和题目要求为准。"
+        },
+        "4_novel_approach": {
+          "describe": "解释设计选择并用基线或替代方案证明实质贡献；经典模型适配题意时无需强行组合",
+          "weight_hint": 1.5
+        },
+        "5_reproducibility": {
+          "describe": "Appendix 含 code listing + data source + parameter values, 任意第三方可复现"
+        }
+      }
+    },
+    "9": {
+      "_note": "美赛终审: 题目特定交付物 + sensitivity + reproducibility + current rules",
+      "dims": {
+        "1_anti_pattern_coverage": {
+          "describe": "对照 competitions/mcm/anti_patterns.md 逐条核查；清单是维护者启发，不预测奖项"
+        },
+        "5_pdf_compile_clean": {
+          "describe": "pdflatex / xelatex 编译 0 error, 字体英文 + math symbol 正确"
+        }
+      }
+    }
+  },
+  "panel_personas": [
+    {"id": "rigor",         "label": "Rigor Reviewer",        "weight": 1.0, "focus": "假设支撑 + 公式正确 + 收敛"},
+    {"id": "novelty",       "label": "Modeling Contribution", "weight": 1.5, "focus": "design necessity + baseline evidence + substantive contribution"},
+    {"id": "communication", "label": "Communication Reviewer","weight": 1.3, "focus": "写作清晰 + 图表 + 术语"},
+    {"id": "judge_30s",     "label": "30-Second Judge",       "weight": 1.5, "focus": "1-page summary 抓人 + 主要 figure"},
+    {"id": "policy",        "label": "Policy / Stakeholder",  "weight": 1.2, "focus": "题目要求的 stakeholder deliverable", "_note": "仅当前题目明确要求时使用；否则替换为 weight=1.0 的复现性视角"}
+  ],
+  "anti_pattern_path": "competitions/mcm/anti_patterns.md",
+  "phrase_bank_path": "competitions/mcm/phrase_bank.md",
+  "winning_patterns_path": "competitions/mcm/winning_patterns.md",
+  "abstract_template_path": "competitions/mcm/abstract_template.md",
+  "paper_skeleton_path": "competitions/mcm/paper_skeleton.md",
+  "latex_template_dir": "templates/latex/mcm",
+  "citation_format": "IEEE or APA"
+}

@@ -1,0 +1,28 @@
+{
+  "_schema_version": "1.1",
+  "_doc": "AI 使用台账模板。把 compliance 节合并到 state/decision_log.json；条目按使用时间顺序追加。显式空数组表示未使用 AI，字段缺失不等于未使用。",
+  "_entry_template": {
+    "tool": "工具及提供方，例如 OpenAI ChatGPT",
+    "model": "具体模型，例如 GPT-5",
+    "version": "可识别的版本或版本日期，例如 21 July 2026 version",
+    "used_at": "可选，ISO 8601 时间，例如 2026-07-21T14:30:00+08:00",
+    "use_stage": "实际使用环节，例如 Stage 7 / 模型评价",
+    "purpose": "具体用途，避免只写辅助写作",
+    "paper_sections": [
+      "受影响的论文节，例如 Abstract",
+      "例如 Section 7"
+    ],
+    "query": "对话式或生成式 AI 的完整原始输入；不得只写摘要",
+    "output": "对话式或生成式 AI 的完整原始输出；不得只写摘要",
+    "disclosure": "仅非对话式工具使用。翻译、代码补全等可用完整用途说明替代 query/output",
+    "human_review": "团队如何核验事实、公式、代码、引用、原创性并修正问题",
+    "adoption": "可选，最终保留、改写或舍弃了什么",
+    "evidence": [
+      "可选的本地交互记录路径，例如 state/ai/AI-001.txt"
+    ]
+  },
+  "_entry_rule": "每条必须含 tool/model/version/use_stage/purpose/paper_sections/human_review，并二选一：完整 query+output，或 disclosure。若填写 query/output，请删除 disclosure；若使用 disclosure，请删除 query/output。",
+  "compliance": {
+    "ai_usage": []
+  }
+}

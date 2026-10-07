@@ -1,0 +1,17 @@
+# 字段示例，不是题目给定条件。初始 proposed 不等于采用，更不等于数学核验。
+assumption_id: ASM-Q1-CONSTANT
+question: Q1
+statement: "在研究时段内将给定系数视为常数"
+rationale: "先建立可解释的常系数基线，时变影响需单独核对"
+impact: "可能影响极值时刻及结果误差"
+testability: "比较分时系数模型与常系数近似，检查结论是否稳定"
+linked_requirement_ids: ["REQ-Q1-001"]
+linked_ambiguity_ids: []
+reversible: true
+sensitivity_required: true
+validation_plan: "按实际题目预定变化范围，对比时变模型并检查误差与结论稳定性"
+validation_checks: ["constant_coefficient_error"]
+status: proposed
+evidence_refs: []
+# 初始提议不需要先有冻结合同；ReqID 须与随后合同一致。
+# 可选 legacy_refs: [{stage: "4", index: 0}] 只绑定实际旧记录；不自行填写 review / legacy_sources。

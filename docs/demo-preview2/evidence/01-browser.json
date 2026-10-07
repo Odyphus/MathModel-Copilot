@@ -1,0 +1,99 @@
+{
+  "captured_at": "2026-10-06T15:44:26.728Z",
+  "browser": "154.0.8037.98",
+  "actual_http": true,
+  "mocked": false,
+  "authority_unchanged": true,
+  "errors": [],
+  "revision": 22,
+  "status": {
+    "revision": 22,
+    "requirements": {
+      "total": 5,
+      "verified": 5,
+      "missing": [],
+      "questions": {
+        "Q1": "verified"
+      },
+      "rows": [
+        {
+          "id": "REQ-Q1-001",
+          "question": "Q1",
+          "status": "verified",
+          "missing_outputs": [],
+          "contract_current": true
+        },
+        {
+          "id": "REQ-Q1-002",
+          "question": "Q1",
+          "status": "verified",
+          "missing_outputs": [],
+          "contract_current": true
+        },
+        {
+          "id": "REQ-Q1-003",
+          "question": "Q1",
+          "status": "verified",
+          "missing_outputs": [],
+          "contract_current": true
+        },
+        {
+          "id": "REQ-Q1-004",
+          "question": "Q1",
+          "status": "verified",
+          "missing_outputs": [],
+          "contract_current": true
+        },
+        {
+          "id": "REQ-Q1-005",
+          "question": "Q1",
+          "status": "verified",
+          "missing_outputs": [],
+          "contract_current": true
+        }
+      ],
+      "complete": true
+    },
+    "current_task": {
+      "id": "T-MCM-technical-summary",
+      "title": "复核模型适用边界并撰写面向工程人员的技术摘要",
+      "role": "writer",
+      "dependencies": [
+        "result.Q1.RUN-0b104e18645645e3@1"
+      ],
+      "requirements": [
+        "REQ-Q1-005"
+      ],
+      "status": "pending",
+      "outputs": []
+    },
+    "current_objects": {
+      "problem.Q1": "problem.Q1@1",
+      "model.Q1": "model.Q1@1",
+      "params.Q1": "params.Q1@1",
+      "data.Q1": "data.Q1@1",
+      "code.Q1": "code.Q1@1",
+      "plan.Q1": "plan.Q1@1",
+      "RUN-0b104e18645645e3": "RUN-0b104e18645645e3@1",
+      "CHECK-094443f1210145ce": "CHECK-094443f1210145ce@1",
+      "result.Q1.RUN-0b104e18645645e3": "result.Q1.RUN-0b104e18645645e3@1",
+      "CLAIM-MCM": "CLAIM-MCM@1",
+      "paper.Q1": "paper.Q1@1"
+    },
+    "stale_objects": {},
+    "blockers": [],
+    "next_action": "复核模型适用边界并撰写面向工程人员的技术摘要",
+    "submission": {
+      "ready": false,
+      "state": "generated",
+      "blockers": [
+        "No current passing delivery audit",
+        "Historical/research checks are not formal submission readiness",
+        "Package has not entered awaiting_submission"
+      ],
+      "audit_id": null,
+      "package_id": null
+    }
+  },
+  "authority_hash": "30f1e8420ea6c1be327dc3fc91a66396f2a94418358f55f7e3abcdb1101fa3d4"
+}

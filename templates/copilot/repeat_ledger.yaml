@@ -1,0 +1,14 @@
+schema_version: "1.0"
+record_type: repeat_ledger
+stable_id: null
+root_seed: null
+entries:
+  - repeat_index: 1
+    seed: null
+    status: completed
+    started_at: null
+    finished_at: null
+    output_refs: []
+created_at: null
+semantic_hash: null
+record_hash: null

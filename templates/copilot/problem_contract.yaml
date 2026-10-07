@@ -1,0 +1,36 @@
+schema_version: "1.0"
+stable_id: null
+contract_id: null
+question: Q1
+title: null
+revision: 1
+status: draft
+source_files:
+  - path: null
+    sha256: null
+    source_role: official_problem_statement
+requirements:
+  - req_id: REQ-Q1-001
+    question: Q1
+    source_anchor: null
+    requested_action: null
+    inputs: []
+    outputs: []
+    units: []
+    precision: null
+    quantity_roles:
+      fixed: []
+      observed: []
+      decision: []
+      derived: []
+    constraints: []
+    acceptance_evidence: []
+    downstream_questions: []
+    not_applicable_reasons: {}
+    status: active
+parent_contract_id: null
+parent_semantic_hash: null
+frozen_by: []
+frozen_at: null
+semantic_hash: null
+record_hash: null

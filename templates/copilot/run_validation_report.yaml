@@ -1,0 +1,24 @@
+schema_version: "1.0"
+record_type: run_validation_report
+stable_id: null
+question: null
+spec_id: null
+git_commit: null
+data_version: null
+data_hash: null
+config_hash: null
+repeat_count: 1
+outputs:
+  - path: results/result.json
+    sha256: null
+checks:
+  - check_id: MODEL-SPEC-CHECK-ID
+    status: pending
+    predeclared: true
+    criterion: null
+    evidence: null
+    reason: null
+status: pending
+validated_at: null
+semantic_hash: null
+record_hash: null

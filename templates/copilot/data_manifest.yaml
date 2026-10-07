@@ -1,0 +1,13 @@
+schema_version: "1.0"
+record_type: data_manifest
+stable_id: null
+data_version: null
+files:
+  - path: data/input.csv
+    sha256: null
+    byte_size: null
+    role: formal_input
+no_data_reason: null
+created_at: null
+semantic_hash: null
+record_hash: null

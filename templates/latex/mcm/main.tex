@@ -1,0 +1,107 @@
+% SEED v0.4 — MCM/ICM generic LaTeX assembly template
+% Used by scripts/render_paper.py --competition mcm
+% COMAP 2027 baseline: readable type >=12pt; complete main solution <=25 pages.
+
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\lstset{
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    showstringspaces=false,
+}
+
+% MATHMODEL_* fields are fail-closed render tokens. render_paper.py replaces
+% every token from decision_log.paper_metadata or explicit CLI arguments.
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Team \#MATHMODEL_MCM_CONTROL_NUMBER}
+\fancyhead[R]{Page \thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{14.5pt}
+
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+
+\begin{document}
+
+% Page 1 is the Summary Sheet. Keep the summary on this page and replace all
+% placeholders. Do not add a separate decorative cover page.
+\thispagestyle{fancy}
+\begin{center}
+\textbf{\Large MCM/ICM Summary Sheet}\\[0.6cm]
+{\large Problem Chosen: \textbf{MATHMODEL_MCM_PROBLEM}}\hfill
+{\large Team Control Number: \textbf{MATHMODEL_MCM_CONTROL_NUMBER}}\\[0.7cm]
+{\LARGE \textbf{MATHMODEL_MCM_TITLE}}
+\end{center}
+
+\section*{Summary}
+% MATHMODEL:SECTION abstract
+
+\textbf{Keywords:} MATHMODEL_MCM_KEYWORDS
+\clearpage
+
+% The section Markdown files own their headings. A table of contents is not
+% emitted by default because it consumes the 25-page solution budget. Add one
+% only when the team deliberately chooses to include it.
+
+% MATHMODEL:SECTION 1_problem_restate
+
+% MATHMODEL:SECTION 2_problem_analysis
+
+% MATHMODEL:SECTION 3_assumptions
+
+% MATHMODEL:SECTION 4_notation
+
+% MATHMODEL:SECTION 5_models
+
+% MATHMODEL:SECTION 6_sensitivity
+
+% MATHMODEL:SECTION 7_evaluation
+
+% Put any problem-specific letter, memo, or other required deliverable in the
+% appropriate body Markdown file before References. It counts toward the main
+% solution page limit unless the current problem explicitly says otherwise.
+% MATHMODEL:SECTION 8_references
+
+\appendix
+% MATHMODEL:SECTION appendix_code
+
+% COMAP 2027: this report follows the main solution and is excluded from its
+% 25-page limit. AI tools must also be disclosed/cited where the rules require.
+% MATHMODEL:OPTIONAL ai_use_report BEGIN
+\clearpage
+\section*{Report on Use of AI}
+% MATHMODEL:SECTION ai_use_report
+% MATHMODEL:OPTIONAL ai_use_report END
+
+\end{document}

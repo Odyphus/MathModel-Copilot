@@ -1,0 +1,14 @@
+name: Feature request
+description: Describe a modeling or review task that the current product cannot complete
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Task, current obstacle and desired observable behavior
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Scope and evidence boundary
+      description: Explain which facts must remain local, read-only or independently checked

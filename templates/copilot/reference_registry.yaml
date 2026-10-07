@@ -1,0 +1,38 @@
+schema_version: "1.0"
+record_type: reference_registry
+no_external_sources: false
+citation_style:
+  name: team_default_numeric
+  standard: GB/T 7714-2025
+  marker_format: "[{number}]"
+  first_appearance_order: team_default_quality_only
+language_policy:
+  paper_language: zh-CN
+  chinese_source_priority: true
+  chinese_majority_preferred: true
+  preserve_original_bibliographic_language: true
+  status: team_default_quality_only_not_official
+references:
+  # reference_id 必须等于当前项目中已核验并 adopted 的 LiteratureEvidenceEntry.evidence_id。
+  - reference_id: LIT-001
+    number: 1
+    title: null
+    doi: null
+    # 国内事实、标准、统计与本土背景优先使用权威中文来源；原创算法可保留英文原始文献。
+    source_language: zh-CN
+    bibliography_language: zh-CN
+    foreign_source_reason: null
+    # 仅存在并已核验官方中文题名时填写；不得自行翻译英文题名。
+    official_chinese_title: null
+    # bibliography_anchor 必须包住“编号 + 完整文后条目”，不能只包住编号。
+    bibliography_anchor: REF_LIT_001
+    verification_status: verified
+    adoption_status: adopted
+    # 必须绑定该 LiteratureEvidenceEntry 当前 ReferenceVerificationReport.record_hash。
+    verification_record_hash: null
+citations:
+  - citation_id: CITE-001
+    reference_id: LIT-001
+    claim_id: CLAIM-Q1-001
+    number: 1
+    anchor: CITE_001

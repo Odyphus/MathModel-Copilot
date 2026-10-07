@@ -1,0 +1,23 @@
+schema_version: "1.0"
+stable_id: null
+artifact_type: ValidationPlan
+question: Q1
+# 先保存实际 Python 检查器，再填写它的 SHA-256；此处 null 不是可注册的值。
+checker:
+  path: checker.py
+  sha256: null
+  argv: ["{python}", "{checker}", "{run}", "{report}"]
+checks:
+  - check_id: baseline
+    applicability: required
+    not_applicable_reason: null
+    method: null
+    # 在运行前填写可复核的通过标准（至少 8 字符）；按实际检查写单位和容差。
+    # 示例与字段帮助：copilot.py payload-help register --kind ValidationPlan
+    criterion: null
+    decision_rule: null
+    evidence_target: null
+    status: pending
+created_at: null
+semantic_hash: null
+record_hash: null

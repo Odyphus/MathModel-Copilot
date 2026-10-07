@@ -1,0 +1,254 @@
+{
+  "ok": true,
+  "result": {
+    "case": "MCM 2009 A",
+    "synthetic": true,
+    "old_results_reused": false,
+    "objects": {
+      "contract": "problem.Q1@1",
+      "model": "model.Q1@1",
+      "params": "params.Q1@1",
+      "data": "data.Q1@1",
+      "code": "code.Q1@1",
+      "plan": "plan.Q1@1",
+      "run": "RUN-0b104e18645645e3@1",
+      "validation": "CHECK-094443f1210145ce@1",
+      "result": "result.Q1.RUN-0b104e18645645e3@1",
+      "claim": "CLAIM-MCM@1",
+      "section": "paper.Q1@1"
+    },
+    "metrics": {
+      "scenario_count": 9,
+      "candidate_count": 72,
+      "checked_steps": 43200,
+      "horizon": 600,
+      "capacity": 0.8,
+      "selected": [
+        {
+          "scenario": "balanced",
+          "demand_factor": 0.8,
+          "selected_mode": "circle",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 248.76799999999838,
+          "residual": 0.8320000000000001,
+          "score": 2.06333333333332
+        },
+        {
+          "scenario": "balanced",
+          "demand_factor": 1.0,
+          "selected_mode": "circle",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 310.9600000000003,
+          "residual": 1.04,
+          "score": 2.0633333333333352
+        },
+        {
+          "scenario": "balanced",
+          "demand_factor": 1.2,
+          "selected_mode": "circle",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 373.15200000000306,
+          "residual": 1.2479999999999998,
+          "score": 2.06333333333335
+        },
+        {
+          "scenario": "commuter",
+          "demand_factor": 0.8,
+          "selected_mode": "circle",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 363.5840000000018,
+          "residual": 1.2160000000000002,
+          "score": 2.0633333333333432
+        },
+        {
+          "scenario": "commuter",
+          "demand_factor": 1.0,
+          "selected_mode": "circle",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 454.4799999999965,
+          "residual": 1.52,
+          "score": 2.063333333333318
+        },
+        {
+          "scenario": "commuter",
+          "demand_factor": 1.2,
+          "selected_mode": "circle",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 545.3759999999962,
+          "residual": 1.824,
+          "score": 2.0633333333333197
+        },
+        {
+          "scenario": "overload",
+          "demand_factor": 0.8,
+          "selected_mode": "circle",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 669.7600000000024,
+          "residual": 2.24,
+          "score": 2.06333333333334
+        },
+        {
+          "scenario": "overload",
+          "demand_factor": 1.0,
+          "selected_mode": "circle",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 837.1999999999913,
+          "residual": 2.8,
+          "score": 2.0633333333333126
+        },
+        {
+          "scenario": "overload",
+          "demand_factor": 1.2,
+          "selected_mode": "entry",
+          "cycle": 60,
+          "greens": [
+            13,
+            13,
+            13,
+            13
+          ],
+          "departed": 952.3489999999942,
+          "residual": 55.65100000000033,
+          "score": 18.539655753968308
+        }
+      ]
+    },
+    "status": {
+      "revision": 22,
+      "requirements": {
+        "total": 5,
+        "verified": 5,
+        "missing": [],
+        "questions": {
+          "Q1": "verified"
+        },
+        "rows": [
+          {
+            "id": "REQ-Q1-001",
+            "question": "Q1",
+            "status": "verified",
+            "missing_outputs": [],
+            "contract_current": true
+          },
+          {
+            "id": "REQ-Q1-002",
+            "question": "Q1",
+            "status": "verified",
+            "missing_outputs": [],
+            "contract_current": true
+          },
+          {
+            "id": "REQ-Q1-003",
+            "question": "Q1",
+            "status": "verified",
+            "missing_outputs": [],
+            "contract_current": true
+          },
+          {
+            "id": "REQ-Q1-004",
+            "question": "Q1",
+            "status": "verified",
+            "missing_outputs": [],
+            "contract_current": true
+          },
+          {
+            "id": "REQ-Q1-005",
+            "question": "Q1",
+            "status": "verified",
+            "missing_outputs": [],
+            "contract_current": true
+          }
+        ],
+        "complete": true
+      },
+      "current_task": {
+        "id": "T-MCM-technical-summary",
+        "title": "复核模型适用边界并撰写面向工程人员的技术摘要",
+        "role": "writer",
+        "dependencies": [
+          "result.Q1.RUN-0b104e18645645e3@1"
+        ],
+        "requirements": [
+          "REQ-Q1-005"
+        ],
+        "status": "pending",
+        "outputs": []
+      },
+      "current_objects": {
+        "problem.Q1": "problem.Q1@1",
+        "model.Q1": "model.Q1@1",
+        "params.Q1": "params.Q1@1",
+        "data.Q1": "data.Q1@1",
+        "code.Q1": "code.Q1@1",
+        "plan.Q1": "plan.Q1@1",
+        "RUN-0b104e18645645e3": "RUN-0b104e18645645e3@1",
+        "CHECK-094443f1210145ce": "CHECK-094443f1210145ce@1",
+        "result.Q1.RUN-0b104e18645645e3": "result.Q1.RUN-0b104e18645645e3@1",
+        "CLAIM-MCM": "CLAIM-MCM@1",
+        "paper.Q1": "paper.Q1@1"
+      },
+      "stale_objects": {},
+      "blockers": [],
+      "next_action": "复核模型适用边界并撰写面向工程人员的技术摘要",
+      "submission": {
+        "ready": false,
+        "state": "generated",
+        "blockers": [
+          "No current passing delivery audit",
+          "Historical/research checks are not formal submission readiness",
+          "Package has not entered awaiting_submission"
+        ],
+        "audit_id": null,
+        "package_id": null
+      }
+    }
+  }
+}

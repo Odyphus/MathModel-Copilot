@@ -1,0 +1,30 @@
+{
+  "schema_version": "0.1",
+  "id": "cumcm",
+  "name": "全国大学生数学建模竞赛",
+  "version": "0.1.0",
+  "aliases": [],
+  "rules_year": 2026,
+  "rules_status": "baseline",
+  "official_sources": [
+    {"id": "participation", "url": "https://www.mcm.edu.cn/html_cn/node/9d8e511fe7a1447b35f53a82c908e2e0.html", "origin": "official_rule", "rules_year": 2026, "required_for_lock": true, "checked_at": "2026-10-05"},
+    {"id": "format", "url": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html", "origin": "official_rule", "rules_year": 2026, "required_for_lock": true, "checked_at": "2026-10-05"},
+    {"id": "ai-policy", "url": "https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html", "origin": "official_rule", "rules_year": 2026, "required_for_lock": true, "checked_at": "2026-10-05"}
+  ],
+  "rules": {
+    "separate_support_archive": {"value": true, "origin": "official_rule", "source_ids": ["format"]},
+    "paper_formats": {"value": ["pdf", "docx"], "origin": "official_rule", "source_ids": ["format"]},
+    "paper_max_bytes": {"value": 20000000, "comparison": "lte", "origin": "maintainer_default", "source_ids": ["format"], "note": "官方上限写为20 MB；工具默认按十进制20,000,000 bytes执行，非官网明示的字节换算。"},
+    "support_max_bytes": {"value": 20000000, "comparison": "lte", "origin": "maintainer_default", "source_ids": ["format"], "note": "官方上限写为20 MB；工具默认按十进制20,000,000 bytes执行，需以当届系统为准。"},
+    "support_formats": {"value": ["zip", "rar"], "origin": "official_rule", "source_ids": ["format"]},
+    "main_text_max_pages": {"value": 30, "origin": "official_rule", "source_ids": ["format"]},
+    "first_page": {"value": "abstract", "origin": "official_rule", "source_ids": ["format"]},
+    "table_of_contents": {"value": false, "origin": "official_rule", "source_ids": ["format"]},
+    "ai_declaration_position": {"value": "before_references", "origin": "official_rule", "source_ids": ["ai-policy"]},
+    "ai_details_filename": {"value": "AI工具使用详情.pdf", "origin": "official_rule", "source_ids": ["ai-policy"]},
+    "anonymity": {"value": true, "origin": "official_rule", "source_ids": ["participation", "format"]},
+    "default_font_size_pt": {"value": 12, "origin": "maintainer_default", "source_ids": [], "note": "继承模板的可维护默认；不是赛事统一字号规则。"}
+  },
+  "required_checks": ["rules_verified", "anonymity_passed", "page_limit_passed", "ai_disclosure_passed", "supporting_materials_passed"],
+  "resources": {"rules_guide": "current_rules.md", "paper_skeleton": "paper_skeleton.md", "rubric_overlay": "rubric_overlay.json"}
+}

@@ -1,0 +1,16 @@
+# 字段示例，不是当前题目的真实歧义。先按题面替换，再用 interpretation 登记。
+# 先 configure question_count；此 ReqID 可先规划，须与随后 ProblemContract 保持一致。
+ambiguity_id: AMB-Q1-INTERVAL
+question: Q1
+source_anchor: "示例题面：统计从起点至终点时段内的事件数，未说明终点归属"
+interpretations:
+  - "左闭右开区间，终点事件归入下一时段"
+  - "闭区间，终点事件计入当前时段"
+severity: high
+impact: "端点事件可能改变统计总量及边界检查结果"
+owner: modeler
+requirement_ids: ["REQ-Q1-001"]
+status: open
+evidence_refs: []
+# 可选 legacy_refs: [{stage: "2", index: 0}] 仅用于绑定实际旧 Stage 记录。
+# 不填写 legacy_sources / review / resolution；来源哈希与解决记录只能由 API 生成。

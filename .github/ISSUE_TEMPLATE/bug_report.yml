@@ -1,0 +1,22 @@
+name: Bug report
+description: Report a reproducible behavior using synthetic or shareable material
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Candidate version and platform
+      description: Include Python version and whether this came from a wheel or source
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction, expected behavior and actual behavior
+      description: Use synthetic inputs; remove keys, private paths and restricted problem material
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Actual evidence and unexecuted checks
+      description: A configured workflow is not an executed test; preserve the failure details

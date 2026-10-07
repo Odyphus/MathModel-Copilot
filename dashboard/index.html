@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MathModel Copilot · 建模工作台</title><link rel="stylesheet" href="styles.css"><script src="data.js" defer></script><script src="workbench.js" defer></script><script src="interaction.js" defer></script><script src="app.js" defer></script><script src="help.js" defer></script></head>
+<body>
+<a class="skip-link" href="#content">跳到项目内容</a>
+<div id="preview-controls" hidden></div>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="项目导航">
+    <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 24V8l11 10L27 8v16M5 24l11-6 11 6"/></svg><span><strong>数学建模助手</strong><small>MathModel Copilot</small></span></div>
+    <div class="workspace-label"><span id="workspace-name">建模项目</span><small id="workspace-mode">本地 · 只读工作台</small></div>
+    <nav id="navigation" aria-label="一级导航"></nav>
+    <div class="sidebar-footer"><span class="local-dot"></span><span id="connection-label">等待读取</span><p>从题目到论文，知道下一步。</p></div>
+  </aside>
+  <div class="workspace">
+    <header class="snapshot-bar"><div id="identity" class="identity">正在连接本机项目…</div><div class="snapshot-actions"><button type="button" id="help-link" class="button">使用帮助</button><button type="button" id="interaction-link" class="button" hidden>建模意见</button><button type="button" id="refresh" class="button primary">刷新进展</button></div></header>
+    <section id="help-invitation" class="help-invitation" aria-label="首次使用介绍" hidden></section>
+    <div id="notification" role="status" aria-live="polite"></div>
+    <div id="refresh-status" role="status" aria-live="polite" hidden></div>
+    <main id="content" tabindex="-1"></main>
+    <section id="interaction" class="interaction" aria-labelledby="interaction-heading" hidden></section>
+    <footer class="page-footer"><span>显示本机已登记的项目情况。查看与刷新不会修改项目。</span><div class="footer-actions"><button type="button" id="changes-link" class="button quiet">查看本机变化</button><button type="button" id="diagnostic" class="button quiet" disabled>导出诊断记录</button></div></footer>
+  </div>
+</div>
+<dialog id="detail" aria-labelledby="detail-heading"><div class="detail-top"><button type="button" class="button" id="detail-back">返回上层</button><button type="button" class="button" id="detail-close" aria-label="关闭详情">关闭</button></div><div id="detail-refresh-status" role="status" aria-live="polite" hidden></div><div id="detail-body"></div></dialog>
+<dialog id="help-dialog" aria-labelledby="help-heading"><div class="detail-top"><strong id="help-heading">使用帮助 · 教学模式</strong><button type="button" class="button" id="help-close">退出教学，返回工作台</button></div><div id="help-status" role="status" aria-live="polite"></div><div id="help-body"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+</body></html>

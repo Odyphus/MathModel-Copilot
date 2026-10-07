@@ -1,0 +1,54 @@
+{
+  "_doc": "CUMCM 国赛特化评分维度 overlay。叠加在 references/rubrics.md 通用基础维度之上。score_artifact.py 加载后合并到 DIM_WHITELIST。",
+  "competition": "cumcm",
+  "version": "1.0",
+  "stage_overrides": {
+    "8": {
+      "_note": "国赛 stage 8 写作维度: 摘要信息链 + 引用一致性 + 中文写作规范；维度 key 为兼容旧 state 保留",
+      "dims": {
+        "1_abstract_5_paragraph": {
+          "describe": "摘要覆盖问题、方法、可追溯结果、验证与边界；59 份可提取样本的字符数 IQR 为 [748, 1146]，只作异常提示",
+          "empirical_ref": "abstract_chars"
+        },
+        "2_section_completeness": {
+          "describe": "8 大章节齐全: 摘要/问题重述/分析/假设/符号/模型/灵敏度/评价/参考文献/附录"
+        },
+        "3_formulas_figures_citations": {
+          "describe": "公式 IQR [12, 67]、图 IQR [5, 20]、文献数 IQR [16, 63] 仅作样本观察；引用须按当届科技论文规范统一，仓库默认建议 GB/T 7714",
+          "empirical_refs": ["formula_count", "figure_count", "reference_count"]
+        },
+        "4_language_quality": {
+          "describe": "中文学术表达清晰、术语前后一致、中英混排与标点规范；句长服务于可读性，不设机械区间"
+        },
+        "5_visual_consistency": {
+          "describe": "图表各自承担明确证据职责，字号、单位、图例与配色一致；不设固定每问图数"
+        }
+      }
+    },
+    "9": {
+      "_note": "国赛终审强调动态加载 anti_patterns 清单、电子版合规编译与引用一致性",
+      "dims": {
+        "1_anti_pattern_coverage": {
+          "describe": "对照 competitions/cumcm/anti_patterns.md 42 条逐条核查；该清单是维护者启发式，不是官方评分线"
+        },
+        "5_pdf_compile_clean": {
+          "describe": "xelatex 三编 0 error 0 warning, 字符越界检查"
+        }
+      }
+    }
+  },
+  "panel_personas": [
+    {"id": "math_rigor",      "label": "数学严谨派", "weight": 1.2, "focus": "证明 + 假设支撑 + 收敛性"},
+    {"id": "model_innovation","label": "模型贡献视角", "weight": 1.0, "focus": "设计必要性 + 基线比较 + 实质改动证据"},
+    {"id": "code_correctness","label": "代码正确派", "weight": 1.0, "focus": "数值精度 + 边界 + 复现性"},
+    {"id": "writing_clarity", "label": "写作呈现派", "weight": 1.0, "focus": "摘要信息链 + 物理意义 + 视觉证据"},
+    {"id": "judge_30s",       "label": "评委 30 秒派", "weight": 1.5, "focus": "首屏即抓 + 摘要 + 结果图"}
+  ],
+  "anti_pattern_path": "competitions/cumcm/anti_patterns.md",
+  "phrase_bank_path": "competitions/cumcm/phrase_bank.md",
+  "winning_patterns_path": "competitions/cumcm/winning_patterns.md",
+  "abstract_template_path": "competitions/cumcm/abstract_template.md",
+  "paper_skeleton_path": "competitions/cumcm/paper_skeleton.md",
+  "latex_template_dir": "templates/latex/cumcm",
+  "citation_format": "按当届科技论文规范；仓库默认建议 GB/T 7714"
+}

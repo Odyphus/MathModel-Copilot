@@ -1,0 +1,66 @@
+schema_version: "1.0"
+spec_id: null
+question: null
+revision: 1
+status: draft
+parent_semantic_hash: null
+semantic_hash: null
+record_hash: null
+reality:
+  decision_or_prediction: null
+  stakeholders: []
+  success_definition: null
+method_decision:
+  selected_route: null
+  selection_reason: null
+  candidates:
+    - route: null
+      decision: selected
+      reason: null
+      assumptions: []
+      validation_route: null
+      failure_risk: null
+observation_unit: null
+time_space_scale: null
+inputs: []
+outputs: []
+assumptions: []
+symbols: []
+formulas:
+  - formula_id: null
+    kind: identity
+    expression: null
+    interpretation: null
+    units: null
+    variables: []
+    parameters: []
+objective:
+  formula_id: null
+  direction: null
+  terms: []
+constraints: []
+data_contract:
+  source_manifest: null
+  field_mapping: []
+  filters: []
+  aggregation: []
+  missing_policy: null
+# 只有某一契约段确实不适用时才添加对应键；理由应说明现实或数学原因，不能只写 N/A。
+not_applicable_reasons: {}
+parameter_schema_ref: null
+solver:
+  method: null
+  configuration: {}
+randomness:
+  seed_policy: null
+  repetitions: null
+# 按需加入 type: semantic_evidence 的证据绑定；字段见 references/model-evidence.md。
+validation_plan: []
+required_outputs: []
+failure_conditions: []
+downstream_dependencies: []
+governance:
+  drafted_by: []
+  reviewed_by: []
+  frozen_at: null
+  change_reason: null

@@ -1,0 +1,24 @@
+schema_version: "1.0"
+stable_id: null
+artifact_type: DatasetPassport
+question: Q1
+applicability: applicable
+not_applicable_reason: null
+observation_unit: null
+entity_id: null
+event_id: null
+record_id: null
+repeated_measurements: false
+fields:
+  - name: null
+    meaning: null
+    data_type: null
+    unit: null
+    role: feature
+missing_policy: null
+outlier_policy: null
+known_biases: []
+prohibited_uses: []
+created_at: null
+semantic_hash: null
+record_hash: null

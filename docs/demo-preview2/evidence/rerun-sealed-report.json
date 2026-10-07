@@ -1,0 +1,81 @@
+{
+  "question": "Q1",
+  "spec_id": "MS-MCM-A",
+  "git_commit": "",
+  "data_version": "data.Q1@1",
+  "data_hash": "A4E0D4A680D74C99B41D9F8DD34FFEA0DB056CA0990C0C166156809908647361",
+  "config_hash": "4A363BD0A1900C3F9E6CEA11E019C88F57D0364F882C06459F2928298A841270",
+  "repeat_count": 1,
+  "outputs": [
+    {
+      "path": ".copilot/runs/RUN-ec8a7d1b10054e22/results/traffic.json",
+      "sha256": "DEB9D9C6779EDCD371D7E77D4E00350ABAEDB0DECBA520FAEDFB13EF98549E09",
+      "byte_size": 21753548
+    },
+    {
+      "path": ".copilot/runs/RUN-ec8a7d1b10054e22/results/comparison.csv",
+      "sha256": "1797B932AEA0C2FB05AD72D177D21105F6B708706DD858502861CC0B7D4EB224",
+      "byte_size": 685
+    },
+    {
+      "path": ".copilot/runs/RUN-ec8a7d1b10054e22/results/technical_summary.md",
+      "sha256": "71086D5322E9B5279F11122C603B8D6BEFFDA7317ED5B5C3EB365EDB0CB0690F",
+      "byte_size": 1532
+    }
+  ],
+  "code_manifest_id": "code.Q1@1",
+  "code_manifest_hash": "283A9165DCF0C9B46383F30D31C34A335942733BF6A5883FE4F7F6118D04B661",
+  "record_type": "run_validation_report",
+  "checks": [
+    {
+      "check_id": "conservation",
+      "status": "pass",
+      "evidence": [
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/traffic.json",
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/comparison.csv",
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/technical_summary.md"
+      ],
+      "predeclared": true,
+      "criterion": "Nonnegative queues and exact flow conservation within numeric tolerance"
+    },
+    {
+      "check_id": "capacity_and_policy",
+      "status": "pass",
+      "evidence": [
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/traffic.json",
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/comparison.csv",
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/technical_summary.md"
+      ],
+      "predeclared": true,
+      "criterion": "All time steps respect declared service priority and green phases"
+    },
+    {
+      "check_id": "selection_and_sensitivity",
+      "status": "pass",
+      "evidence": [
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/traffic.json",
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/comparison.csv",
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/technical_summary.md"
+      ],
+      "predeclared": true,
+      "criterion": "All demand cases/controllers occur once and finite-grid selected score is minimal"
+    },
+    {
+      "check_id": "technical_summary",
+      "status": "pass",
+      "evidence": [
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/traffic.json",
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/comparison.csv",
+        ".copilot/runs/RUN-ec8a7d1b10054e22/results/technical_summary.md"
+      ],
+      "predeclared": true,
+      "criterion": "Compact engineer-facing description retains synthetic, signal and safety limitations; pagination is separately audited"
+    }
+  ],
+  "status": "pass",
+  "validated_at": "2026-10-06T15:44:32.711709+00:00",
+  "schema_version": "1.0",
+  "stable_id": "OBJ-1DAC5F0CE0B14C9E8FEF644EB5CB28B7",
+  "semantic_hash": "F50D69DAC029E4E600DB31FD620786A85F6878238397A60AA4976A9552B3E1B1",
+  "record_hash": "EBCF233DD2B232C0142C70A839ECBDEA55E5AA1DFEA0DEF899A60D38A7FD7796"
+}

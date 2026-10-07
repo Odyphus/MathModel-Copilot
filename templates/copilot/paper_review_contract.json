@@ -1,0 +1,21 @@
+{
+  "version": "0.1",
+  "tables": [
+    {
+      "id": "replace-with-material-name",
+      "question": "Q1",
+      "source_id": "replace-with-current-ArtifactRecord-or-ResultRecord-id",
+      "result_id": "replace-with-current-verified-ResultRecord-id",
+      "parameter_object_id": "replace-with-ParameterSet-object-id-used-by-run",
+      "path": "paper_materials/replace-with-registered-table.csv",
+      "required_columns": ["replace-with-required-column"],
+      "numeric_columns": {
+        "replace-with-required-column": {
+          "unit": "replace-with-actual-unit",
+          "basis": "replace-with-problem-or-validation-criterion-location"
+        }
+      }
+    }
+  ],
+  "manuscripts": []
+}

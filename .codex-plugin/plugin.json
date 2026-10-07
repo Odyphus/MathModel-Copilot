@@ -1,0 +1,31 @@
+{
+  "name": "mathmodel-copilot",
+  "version": "0.3.0-preview.1",
+  "description": "Preview candidate: guided modeling, actual runs, evidence checks and a local project workspace.",
+  "license": "LicenseRef-Mixed-Review-Only",
+  "keywords": [
+    "math-modeling",
+    "cumcm",
+    "mcm",
+    "icm",
+    "diangong",
+    "codex-skill"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "MathModel Copilot｜建模与证据协作",
+    "shortDescription": "逐项管理需求、真实运行、验证、论文与协作",
+    "longDescription": "Local review candidate; separate from the upstream installation. Redistribution rights remain unresolved.",
+    "category": "Education",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $mathmodel-copilot to guide my CUMCM team and keep evidence current.",
+      "Use $mathmodel-copilot to compare MCM problem choices and record the decision.",
+      "Use $mathmodel-copilot to review actual paper sources and submission blockers."
+    ],
+    "brandColor": "#10A37F"
+  }
+}

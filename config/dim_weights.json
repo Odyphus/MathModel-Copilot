@@ -1,0 +1,106 @@
+{
+  "_doc": "题型 dim 权重表 (competition × task_type × stage × dim → weight). score_artifact.py 在 compute_verdict 前对 scores 重加权。default = 1.0 (等价老逻辑)。权重被 clamp 到 [0.7, 1.5]。",
+  "_design": "未列出的 dim 默认 1.0; task_type=default 等价老逻辑; 加权后 score 仍在 [1, 10]。",
+  "_clamp": {"min": 0.7, "max": 1.5},
+
+  "cumcm": {
+    "default": {
+      "_note": "全 1.0, 等价老逻辑"
+    },
+    "A_optimization": {
+      "_note": "A 优化题: 加权候选覆盖 / 选择依据 / 求解可行性 / 灵敏度",
+      "3": {"1_candidate_diversity": 1.2, "2_selection_rationale": 1.3, "4_solver_feasibility": 1.2},
+      "5": {"1_subproblem_completeness": 1.0, "2_cross_reference_chain": 1.2},
+      "6": {"1_multivariate_perturbation": 1.3, "4_robust_interval_quantitative": 1.2}
+    },
+    "B_evaluation": {
+      "_note": "B 评价类: 加权指标体系 / 权重合理性 / 可解释性",
+      "3": {"2_selection_rationale": 1.3, "5_literature_support": 1.2},
+      "5": {"1_subproblem_completeness": 1.2, "3_symbol_consistency": 1.2},
+      "8": {"3_formulas_figures_citations": 1.2}
+    },
+    "C_data": {
+      "_note": "C 数据题: 加权数据处理 / 灵敏度 / 证据呈现",
+      "2": {"4_data_alignment": 1.4},
+      "5": {"1_subproblem_completeness": 1.3, "4_visual_density": 1.3},
+      "6": {"1_multivariate_perturbation": 1.4, "3_output_completeness": 1.2},
+      "8": {"3_formulas_figures_citations": 1.2}
+    },
+    "D_industrial": {
+      "_note": "D 工程类: 加权解可行性 / 工程实现",
+      "3": {"4_solver_feasibility": 1.3},
+      "5": {"1_subproblem_completeness": 1.2, "5_time_budget": 1.2},
+      "7": {"1_strengths_specific": 1.2, "4_generalization_concrete": 1.2}
+    },
+    "E_creative": {
+      "_note": "E 开放题: 加权选择依据 / 结构性候选 / 假设支撑 / 写作",
+      "3": {"2_selection_rationale": 1.4, "1_candidate_diversity": 1.2},
+      "4": {"2_assumption_support": 1.2},
+      "8": {"4_language_quality": 1.2, "5_visual_consistency": 1.2}
+    }
+  },
+
+  "mcm": {
+    "default": {
+      "_note": "美赛默认: 加权可解释的设计选择与 communication；不以命名制造 novelty",
+      "3": {"2_selection_rationale": 1.3},
+      "8": {"3_communication_clarity": 1.3}
+    },
+    "A_continuous": {
+      "_note": "A 连续: 加权选择依据、方法支撑与假设严谨性",
+      "3": {"2_selection_rationale": 1.3, "5_literature_support": 1.2},
+      "4": {"2_assumption_support": 1.3},
+      "5": {"1_subproblem_completeness": 1.2}
+    },
+    "B_discrete": {
+      "_note": "B 离散: 加权算法可行性与选择依据",
+      "3": {"2_selection_rationale": 1.2, "4_solver_feasibility": 1.3},
+      "5": {"2_cross_reference_chain": 1.2}
+    },
+    "C_data": {
+      "_note": "C 数据: 加权数据处理 + 灵敏度 + presentation",
+      "2": {"4_data_alignment": 1.4},
+      "6": {"1_multivariate_perturbation": 1.4},
+      "8": {"3_communication_clarity": 1.3, "5_reproducibility": 1.3}
+    },
+    "D_network": {
+      "_note": "D 网络/系统: 加权问题分解 + 解可行性",
+      "2": {"1_subproblem_decomposition": 1.3},
+      "3": {"4_solver_feasibility": 1.3}
+    },
+    "E_interdisciplinary": {
+      "_note": "E 跨学科: 加权设计依据、文献支撑、假设边界与写作",
+      "3": {"2_selection_rationale": 1.4, "5_literature_support": 1.3},
+      "4": {"2_assumption_support": 1.3},
+      "8": {"3_communication_clarity": 1.4}
+    },
+    "F_policy": {
+      "_note": "F 政策: 加权选择依据、推广边界与题目要求的 stakeholder deliverable",
+      "3": {"2_selection_rationale": 1.3},
+      "7": {"4_generalization_concrete": 1.4},
+      "8": {"3_communication_clarity": 1.5, "2_section_completeness": 1.3}
+    }
+  },
+
+  "diangong": {
+    "default": {
+      "_note": "电工杯默认: 加权数据完整性 + 工程实用性 (体现在 stage 7/8)",
+      "2": {"4_data_alignment": 1.4},
+      "5": {"5_time_budget": 1.3, "1_subproblem_completeness": 1.2},
+      "7": {"4_generalization_concrete": 1.3, "1_strengths_specific": 1.2},
+      "8": {"5_visual_engineering": 1.2}
+    },
+    "A_engineering": {
+      "_note": "A 电力工程: 加权工程参数 + 灵敏度 + 工程图",
+      "2": {"4_data_alignment": 1.4},
+      "5": {"4_visual_density": 1.3, "5_time_budget": 1.3},
+      "6": {"1_multivariate_perturbation": 1.3, "4_robust_interval_quantitative": 1.3}
+    },
+    "B_data_engineering": {
+      "_note": "B 能源数据: 加权数据预处理 + 模型可解释",
+      "2": {"4_data_alignment": 1.5},
+      "5": {"1_subproblem_completeness": 1.3, "4_visual_density": 1.2},
+      "8": {"5_visual_engineering": 1.3}
+    }
+  }
+}
