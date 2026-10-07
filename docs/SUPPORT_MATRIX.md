@@ -19,4 +19,6 @@
 
 公开分发权利尚未确认时，候选可以本地评审，不能称为正式开源版。详见 [LICENSE_SCOPE.md](../LICENSE_SCOPE.md)。
 
-本仓库维护者与目标已确认为 Odyphus / MathModel-Copilot，目前私有。GitHub Actions 保留原配置，首次上传时仓库级暂停执行，尚无远程 CI 成功声明。[当前验收](ACCEPTANCE_V03.md)。
+本仓库维护者与目标已确认为 Odyphus / MathModel-Copilot，目前公开可访问。GitHub Actions 保留原配置，首次上传时仓库级暂停执行，尚无远程 CI 成功声明。[当前验收](ACCEPTANCE_V03.md)。
+
+0.3.0-preview.2 的本轮测试、下载与安装结果独立记录在 [更新验收](ACCEPTANCE_V032.md)，不把旧版本结果当成本次重跑。

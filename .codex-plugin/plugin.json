@@ -1,6 +1,6 @@
 {
   "name": "mathmodel-copilot",
-  "version": "0.3.0-preview.1",
+  "version": "0.3.0-preview.2",
   "description": "Preview candidate: guided modeling, actual runs, evidence checks and a local project workspace.",
   "license": "LicenseRef-Mixed-Review-Only",
   "keywords": [

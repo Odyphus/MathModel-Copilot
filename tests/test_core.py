@@ -125,7 +125,7 @@ class PackageIntegrityTests(unittest.TestCase):
         major_minor = ".".join(version.split(".")[:2])
         self.assertIn(f"(v{major_minor})", (ROOT / "SKILL.md").read_text(encoding="utf-8"))
         self.assertIn(
-            f"version-v{version}-", (ROOT / "README.md").read_text(encoding="utf-8")
+            f"**{version}**", (ROOT / "README.md").read_text(encoding="utf-8")
         )
         self.assertIn(
             f"v{major_minor}", (ROOT / "assets" / "banner.svg").read_text(encoding="utf-8")
@@ -133,9 +133,13 @@ class PackageIntegrityTests(unittest.TestCase):
 
     def test_readme_local_links_and_images_exist(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        targets = set(re.findall(r'(?:src|href)="\./([^"#]+)"', readme))
-        targets |= set(re.findall(r"\]\(\./([^)#]+)\)", readme))
-        self.assertIn("assets/banner.svg", targets)
+        raw = set(re.findall(r'(?:src|href)="([^"#]+)"', readme))
+        raw |= set(re.findall(r"\]\(([^)]+)\)", readme))
+        targets = {target.split("#", 1)[0].removeprefix("./") for target in raw
+                   if not target.startswith("#") and not re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", target)}
+        self.assertIn("docs/GIT_COLLABORATION.md", targets)
+        self.assertIn("docs/ACCEPTANCE_V032.md", targets)
+        self.assertIn("https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-latest.zip", raw)
         for target in sorted(targets):
             with self.subTest(target=target):
                 self.assertTrue((ROOT / target).exists())

@@ -1,0 +1,21 @@
+{
+  "current_version": "0.3.0-preview.2",
+  "stable_download": "MathModel-Copilot-latest.zip",
+  "versioned_download": "MathModel-Copilot-v0.3.0-preview.2.zip",
+  "sha256": "4ae81e8e98d22509dd5c96aea029fbacdc927b8ec38edd0b4e9ca0f2332bde47",
+  "bytes": 885263,
+  "manifest_files": 252,
+  "source_manifest_sha256": "8fe02bb1409c2d846ee0da7729385a446cff9e7bcef75298fad53115b21b07dd",
+  "single_skill_entry": true,
+  "deterministic_two_builds": true,
+  "history": [
+    {
+      "version": "0.3.0-preview.1",
+      "path": "archive/MathModel-Copilot-v0.3.0-preview.1.zip",
+      "sha256": "6300fabd2b9c765e578fa554cfc856cd705ff6d44732026f9ebd47f6ca877dc2",
+      "bytes": 829901
+    }
+  ],
+  "compatible_download": "MathModel-Copilot-v0.3-Preview.zip",
+  "integrated_remote_base": "a5884049f0dfd5834af9ef57b789a7256a288795"
+}

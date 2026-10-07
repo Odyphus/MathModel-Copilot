@@ -1,0 +1,200 @@
+{
+  "version": "0.3.0-preview.2",
+  "scope": "Windows prepublication verification; not all external workflows",
+  "python": {
+    "tests_run": 856,
+    "passed": 850,
+    "failures": 0,
+    "errors": 0,
+    "skipped": [
+      {
+        "test": "test_copilot_benchmark.BenchmarkIntegrationTests.test_checker_rejects_forged_completed_count",
+        "reason": "historical_fixture_missing: CUMCM-2018-Problem-B-English.pdf, CUMCM-2018-Problem-B-English-Appendix-1.pdf, Case_1_ result_E.xls, Case_2_ result_E.xls, Case_3_ result_1_E.xls, Case_3_ result_2_E.xls, official_parameters.json; obtain authorized assets in a private test copy; see docs/HISTORICAL_FIXTURES.md"
+      },
+      {
+        "test": "test_copilot_benchmark.BenchmarkIntegrationTests.test_existing_workspace_is_preserved",
+        "reason": "historical_fixture_missing: CUMCM-2018-Problem-B-English.pdf, CUMCM-2018-Problem-B-English-Appendix-1.pdf, Case_1_ result_E.xls, Case_2_ result_E.xls, Case_3_ result_1_E.xls, Case_3_ result_2_E.xls, official_parameters.json; obtain authorized assets in a private test copy; see docs/HISTORICAL_FIXTURES.md"
+      },
+      {
+        "test": "test_copilot_benchmark.BenchmarkIntegrationTests.test_real_smoke_covers_two_questions_without_formal_ready",
+        "reason": "historical_fixture_missing: CUMCM-2018-Problem-B-English.pdf, CUMCM-2018-Problem-B-English-Appendix-1.pdf, Case_1_ result_E.xls, Case_2_ result_E.xls, Case_3_ result_1_E.xls, Case_3_ result_2_E.xls, official_parameters.json; obtain authorized assets in a private test copy; see docs/HISTORICAL_FIXTURES.md"
+      },
+      {
+        "test": "test_render_guard.CumcmLatexGuardTests.test_abstract_overflow_fails_compilation",
+        "reason": "XeLaTeX with ctexart.cls is not installed"
+      },
+      {
+        "test": "test_render_guard.CumcmLatexGuardTests.test_body_over_thirty_pages_fails_compilation",
+        "reason": "XeLaTeX with ctexart.cls is not installed"
+      },
+      {
+        "test": "test_render_guard.CumcmLatexGuardTests.test_original_template_compiles_a_short_electronic_paper",
+        "reason": "XeLaTeX with ctexart.cls is not installed"
+      }
+    ],
+    "source_unchanged": true,
+    "tested_source_manifest_sha256": "ca76f6e35f8dd61c2312f62b2884c34bd54c5c57471dd70e93b5ebd9b0ca7519",
+    "version": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "historical_prerequisites": {
+      "fixtures_present": false,
+      "missing_dependencies": []
+    }
+  },
+  "javascript": {
+    "tests": 118,
+    "passed": 118,
+    "failed": 0,
+    "skipped": 0,
+    "historical_projection_replay": true
+  },
+  "commands": {
+    "compile": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.281
+    },
+    "doctor-cumcm": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.125
+    },
+    "doctor-mcm": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.141
+    },
+    "doctor-diangong": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.125
+    },
+    "skill-.": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.078
+    },
+    "skill-skills-mathmodel-copilot": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.078
+    },
+    "skill-compat-mathmodel-skill": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.062
+    },
+    "diff-check": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.11
+    },
+    "javascript": {
+      "exit_code": 0,
+      "elapsed_seconds": 0.437
+    },
+    "python-full": {
+      "exit_code": 0,
+      "execution": "all 51 original regression modules in 3 isolated worker processes; one import-path retry",
+      "modules": 51
+    }
+  },
+  "installation": {
+    "passed": true,
+    "version": "0.3.0-preview.2",
+    "archive_sha256": "4ae81e8e98d22509dd5c96aea029fbacdc927b8ec38edd0b4e9ca0f2332bde47",
+    "archive_matches_source": true,
+    "manifest_files": 252,
+    "single_skill_entry": true,
+    "overwrite_refusal_preserved_files": true,
+    "authority_unchanged_by_reads": true,
+    "fresh_demo": {
+      "old_results_reused": false,
+      "verified": 5,
+      "total": 5,
+      "submission_ready": false,
+      "checked_steps": 43200
+    },
+    "external_renderer_checks": "not_executed",
+    "core_commands_without_audit_pythonpath": true
+  },
+  "browser": {
+    "passed": true,
+    "browser_version": "154.0.8037.98",
+    "pages": [
+      {
+        "tab": "overview",
+        "text_length": 315
+      },
+      {
+        "tab": "questions",
+        "text_length": 235
+      },
+      {
+        "tab": "results",
+        "text_length": 217
+      },
+      {
+        "tab": "paper",
+        "text_length": 230
+      }
+    ],
+    "mobile_width": 390,
+    "mobile_no_horizontal_overflow": true,
+    "page_errors": [],
+    "failing_http_responses": [],
+    "authority_unchanged": true
+  },
+  "github_team": {
+    "login_preflight": "real GET /user HTTP 200",
+    "create_invite": "offline regression only",
+    "remote_creation_invitation_acceptance": "not_executed"
+  },
+  "independent_review": {
+    "dashboard": "13 text counterexamples plus critical ordering passed",
+    "team": "20/20 independent cases passed; immutable-ID mismatch repaired and replayed",
+    "team_formal_regressions": 46
+  },
+  "initial_environment_run": {
+    "status": "aborted, logs retained locally",
+    "product_failure_claim": false,
+    "reasons": [
+      "private test temp was inside an outer Git tree",
+      "sandbox denied strict realpath despite readable bytes"
+    ],
+    "rerun": "non-Git personal test temp and functioning host environment; safeguards unchanged"
+  },
+  "readme_assertion_rerun": {
+    "initial_full_tests": 856,
+    "initial_failures": 2,
+    "cause": "legacy banner/badge requirements no longer match user-approved README",
+    "repair": "verify real download/version and every local README link; retain approved prose",
+    "rerun": "entire 856-case suite via isolated original regression modules; no runtime code change"
+  },
+  "not_verified": [
+    "Real private team repository creation and teammate invitation acceptance",
+    "Live-host direct AI wakeup and real feedback Issue creation/readback",
+    "Final PDF rendering/human visual acceptance",
+    "New Linux/macOS runtime execution",
+    "Host automatic Skill discovery and fresh-user usability"
+  ],
+  "evidence_note": "Public summary omits private raw project projections, chats, paths and credentials; full logs retained locally",
+  "documentation_note": "Acceptance documentation added after code regression; code, tests and safeguards unchanged",
+  "remote_ci_executed": false,
+  "download_package": {
+    "current_version": "0.3.0-preview.2",
+    "stable_download": "MathModel-Copilot-latest.zip",
+    "versioned_download": "MathModel-Copilot-v0.3.0-preview.2.zip",
+    "sha256": "4ae81e8e98d22509dd5c96aea029fbacdc927b8ec38edd0b4e9ca0f2332bde47",
+    "bytes": 885263,
+    "manifest_files": 252,
+    "source_manifest_sha256": "8fe02bb1409c2d846ee0da7729385a446cff9e7bcef75298fad53115b21b07dd",
+    "single_skill_entry": true,
+    "deterministic_two_builds": true,
+    "history": [
+      {
+        "version": "0.3.0-preview.1",
+        "path": "archive/MathModel-Copilot-v0.3.0-preview.1.zip",
+        "sha256": "6300fabd2b9c765e578fa554cfc856cd705ff6d44732026f9ebd47f6ca877dc2",
+        "bytes": 829901
+      }
+    ],
+    "compatible_download": "MathModel-Copilot-v0.3-Preview.zip",
+    "integrated_remote_base": "a5884049f0dfd5834af9ef57b789a7256a288795"
+  },
+  "final_document_integrity": "33/33 core checks passed after acceptance document and download index creation",
+  "isolated_import_path_retry": "A test-only import-path gap was corrected by supplying scripts on PYTHONPATH; the original error and passing retry are retained locally",
+  "concurrent_remote_integration": "Preserved remote fixed latest-download alias; runtime code unchanged; README/download link integrity and exact package smoke rerun"
+}

@@ -1,8 +1,29 @@
 # 可选 Git 协作
 
-v0.2.0 RC 使用 Git 搬运代码与文稿，仍由 `state/decision_log.json` 管理项目权威。Git commit 与 Copilot revision 含义不同；同一 commit 下的未提交文件也可能已经变化。所有运行继续采用原有实际快照和哈希，不能用 commit 代替运行字节。
+0.3 Preview 使用 Git 搬运代码与文稿，仍由 `state/decision_log.json` 管理项目权威。Git commit 与 Copilot revision 含义不同；同一 commit 下的未提交文件也可能已经变化。所有运行继续采用原有实际快照和哈希，不能用 commit 代替运行字节。
 
-默认 Local 模式不需要 Git、GitHub 账号或网络。手动文件清单和原有 Task Context 可以继续使用。本模块不创建、切换、拉取、推送或合并仓库，也不运行从 PR 或分支取来的程序。队伍工作区不会因产品准备开源而自动公开。
+默认 Local 模式不需要 Git、GitHub 账号或网络。手动文件清单和原有 Task Context 可以继续使用。既有本地协作适配器不自动切换、拉取、推送或合并仓库，也不运行从 PR 或分支取来的程序。新增的可选 `git team` 入口只在明确授权后创建空私有仓库、发送队友邀请；不会上传项目文件。队伍工作区不会因产品准备开源而自动公开。
+
+## 让 AI 帮你开通私有队伍仓库
+
+告诉 AI：“帮我创建一个 GitHub 私有仓库，用于这次比赛的队内协作。”AI 会先检查本机 GitHub CLI 和当前登录账号，确认仓库名后创建空私有仓库。创建完成后，它会提示你提供队友的 GitHub 用户名；确认目标仓库与写入权限后发送邀请。队友需要在 GitHub 接受邀请才能加入。已发送邀请、等待接受、已有写入权限分别报告。
+
+需要 GitHub CLI（`gh`）及本人的登录。缺少工具或权限时给出具体指引，本地建模可以继续；不要把密码或令牌发给 AI。创建功能限当前登录者的个人账号，固定为私有空仓库；组织建仓、批量同步和更改仓库可见性不在此入口范围内。邀请仅授予写入权限，不授予管理权限，已有更高权限不会被降级。
+
+从 Skill 目录执行（`PROJECT` 为已有目录，不必先初始化比赛）：
+
+```text
+python scripts/copilot.py --workspace PROJECT git team status
+python scripts/copilot.py --workspace PROJECT git team create-private --name MODELING-TEAM
+python scripts/copilot.py --workspace PROJECT git team create-private --name MODELING-TEAM --confirm
+python scripts/copilot.py --workspace PROJECT git team invite --repository OWNER/MODELING-TEAM --username TEAMMATE
+python scripts/copilot.py --workspace PROJECT git team invite --repository OWNER/MODELING-TEAM --username TEAMMATE --confirm
+python scripts/copilot.py --workspace PROJECT git team status --repository OWNER/MODELING-TEAM
+```
+
+不带 `--confirm` 的创建、邀请命令只预检，不更改远端。AI 应根据用户对具体目标的实际授权决定是否执行确认命令，不能因为示例包含 `--confirm` 就推定授权。工具不会自动配置本地 remote 或上传文件；首次共享前，按下文启用 `git protect` 并审查交接清单。收到代码后，仍走原有接纳、真实运行与核验流程。
+
+接口、拒绝路径和离线反例已有回归测试。开发验收没有给真人发邀请或新建测试用远端仓库，真实建仓与队友接受流程须在具体队伍授权后单独验收。更多引导见 [私有队伍仓库协议](../references/github_team_setup.md)。
 
 ## 降低三人协作的维护成本
 
@@ -87,7 +108,7 @@ PR 草稿只写本地 Markdown，包含目的、基线、影响、测试及待�
 
 ## GitHub 与支持边界
 
-RC 没有真实队伍 GitHub 仓库及读写授权目标，实际远程关联验收为 **blocked**；本地双 clone 证据不能替代它。没有自建 OAuth、GitHub App、自动建仓库、push、创建 PR、merge、审批、改保护或修改可见性。后续如用户授权特定仓库的只读访问，需单独记录授权范围、真实操作和结果。读取授权不能扩展为写入或公开发布授权。
+v0.2 RC 的真实队伍 GitHub 关联曾因缺少授权目标而 blocked，这份历史证据保留。当前新增了经具体授权的私有建仓与写入邀请入口，但没有真人建仓/接受邀请的实测记录；本地双 clone 和模拟 API 不代替远端验收。没有自建 OAuth、GitHub App 或自动 push、创建 PR、merge、审批、改保护及更改可见性的能力。授权范围和真实结果分别记录；读取授权不能扩展为写入或公开发布授权。
 
 所有 Git 调用采用固定 argv、无 shell、超时及输出上限；关闭可执行的外部 diff/textconv、fsmonitor 和命名 clean/process filters，不运行 hooks，不回显 remote URL 或原始 Git 错误输出。`status` 不递归进入子模块，避免子模块另有的 filter 配置被执行；`uninspected_submodules` 和草稿会明确列出未检查范围。含子模块时，外层文件没有变化不代表子模块干净或已审查。本地测试使用新建临时仓库；测试中为构造两副本比较会明确运行本地文件传输与 merge，这不表示产品适配器会自动执行这些动作。
 

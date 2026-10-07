@@ -1,6 +1,6 @@
 # Third-party notices
 
-The material inherited from upstream mathmodel-skill remains under its original [MIT License](./LICENSE). This does not license the whole derivative. See [LICENSE_SCOPE.md](./LICENSE_SCOPE.md): public redistribution of this private v0.3.0-preview.1 candidate is blocked pending separate rights confirmation.
+The material inherited from upstream mathmodel-skill remains under its original [MIT License](./LICENSE). This does not license the whole derivative. The owner has authorized publishing the v0.3.0-preview.2 test candidate in this public repository; this access decision is not a blanket license grant. Separate rights confirmation remains unresolved; see [LICENSE_SCOPE.md](./LICENSE_SCOPE.md).
 
 ## CUMCM template provenance
 
@@ -24,7 +24,7 @@ Competition rules, linked papers, datasets, websites, trademarks, and other exte
 
 ## Local cumcm-workflow migration in Copilot v0.1
 
-This local derivative includes object definitions, pure validators, document check modules and templates extracted from the user-owned installed cumcm-workflow 1.6.0. Source paths, hashes, exact reuse and adaptations are recorded in docs/MIGRATION.md. No separate public license was present in that source snapshot. The original upstream MIT license is retained for upstream material; it does not grant rights to this additional local source. This candidate is stored in the owner's private GitHub repository; it has not been publicly released. Resolve the migrated component license before public redistribution.
+This derivative includes object definitions, pure validators, document check modules and templates extracted from the user-owned installed cumcm-workflow 1.6.0. Source paths, hashes, exact reuse and adaptations are recorded in docs/MIGRATION.md. No separate public license was present in that source snapshot. The original upstream MIT license is retained for upstream material; it does not grant rights to this additional source. The candidate is available in the owner's public GitHub repository by the owner's publishing request; the migrated component's public license remains to be resolved. Availability does not establish redistribution rights.
 
 ## Historical benchmark materials
 

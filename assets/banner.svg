@@ -62,7 +62,7 @@
   </defs>
   <text class="sym" style="animation-delay:0s" x="560" y="92" font-size="54">∑</text><text class="sym" style="animation-delay:1.5s" x="640" y="330" font-size="64">∫</text><text class="sym" style="animation-delay:3s" x="760" y="70" font-size="40">∂</text><text class="sym" style="animation-delay:2s" x="820" y="352" font-size="36">∇</text><text class="sym" style="animation-delay:1s" x="1230" y="70" font-size="40">λ</text><text class="sym" style="animation-delay:2.5s" x="1215" y="350" font-size="44">π</text><text class="sym" style="animation-delay:4s" x="700" y="200" font-size="34">≈</text><text class="sym" style="animation-delay:0.5s" x="1180" y="205" font-size="30">∞</text>
   <rect x="72" y="58" width="332" height="32" rx="16" fill="#10A37F" fill-opacity="0.12" stroke="#10A37F" stroke-opacity="0.6"/>
-  <text class="pill" x="238" y="79" text-anchor="middle">AGENT SKILL · v0.3.0-preview.1</text>
+  <text class="pill" x="238" y="79" text-anchor="middle">AGENT SKILL · v0.3.0-preview.2</text>
   <text class="title" x="68" y="164" fill="url(#title-grad)">MathModel Copilot</text>
   <text class="subtitle" x="72" y="214">数学建模竞赛的 Agent 工作流</text>
   <text class="tag t0" x="72" y="262">10 个阶段 · 每一步都有进入条件、退出条件与回退路径</text><text class="tag t1" x="72" y="262">一份 decision_log.json · Codex 与 Claude Code 可以接力</text><text class="tag t2" x="72" y="262">脚本重算 verdict · 子问局部返工 · 提交前合规门 fail-closed</text>

@@ -23,19 +23,101 @@
   function decisionItems(view) {
     const rows = view?.status?.interpretations;
     if (!Array.isArray(rows)) return [];
-    const severity = {high: 0, medium: 1, low: 2};
+    const severity = {critical: 0, high: 1, medium: 2, low: 3};
     return rows.filter(row => record(row) && safeId(row.object_id) && row.is_current !== false &&
       view.objects?.[row.object_id]?.is_current !== false &&
       ['AmbiguityEntry', 'AssumptionEntry'].includes(row.kind) &&
       (hasErrors(row.current_errors) || row.kind === 'AmbiguityEntry' && row.status === 'open' ||
         row.kind === 'AssumptionEntry' && row.status === 'proposed'))
-      .sort((a, b) => (severity[a.payload?.severity] ?? 3) - (severity[b.payload?.severity] ?? 3));
+      .sort((a, b) => (severity[a.payload?.severity] ?? 4) - (severity[b.payload?.severity] ?? 4));
   }
 
   function canonical(value) {
     if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
     if (record(value)) return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
     return JSON.stringify(value) ?? 'null';
+  }
+
+  const interpretationKinds = ['AmbiguityEntry', 'AssumptionEntry'];
+  const omit = (value, keys) => Object.fromEntries(Object.entries(value || {}).filter(([key]) => !keys.includes(key)));
+  function currentInterpretations(view) {
+    return (view?.status?.interpretations || []).filter(row => record(row) && interpretationKinds.includes(row.kind) &&
+      row.is_current !== false && view.objects?.[row.object_id]?.is_current !== false);
+  }
+  function interpretationPayload(value) {
+    // Only identity, question bindings and event bookkeeping are excluded.
+    // Unknown fields, exact wording/order, choices and evidence remain in the key.
+    const payload = omit(value, ['question', 'ambiguity_id', 'assumption_id', 'requirement_ids',
+      'linked_requirement_ids', 'linked_ambiguity_ids', 'timestamp', 'stable_id', 'semantic_hash', 'record_hash', 'parent_record_hash']);
+    if (record(payload.review)) payload.review = omit(payload.review, ['at']);
+    return payload;
+  }
+  function interpretationContent(row, view) {
+    const object = view.objects?.[row.object_id];
+    return {row: omit(row, ['object_id', 'question', 'payload']), payload: interpretationPayload(row.payload),
+      object: object ? {kind: object.kind, status: object.status, effective_status: object.effective_status,
+        is_current: object.is_current, current_errors: object.current_errors, files: object.files,
+        payload: interpretationPayload(object.payload)} : null};
+  }
+  function interpretationKey(row, view, rows) {
+    const object = view.objects?.[row.object_id], p = row.payload;
+    if (!object || object.is_current === false || !record(p) || !row.question ||
+      row.kind === 'AmbiguityEntry' && (!Array.isArray(p.interpretations) || !p.interpretations.length) ||
+      row.kind === 'AssumptionEntry' && (typeof p.statement !== 'string' || !p.statement.trim())) return null;
+    const linked = (item, id) => rows.filter(other => other.kind === 'AmbiguityEntry' &&
+      other.question === item.question && other.payload?.ambiguity_id === id);
+    const relations = item => ({
+      ambiguities: (item.payload?.linked_ambiguity_ids || []).map(id => {
+        const matches = linked(item, id);
+        return matches.length === 1 && view.objects?.[matches[0].object_id]?.is_current !== false && view.objects?.[matches[0].object_id]
+          ? interpretationContent(matches[0], view) : {unresolved: id, object_id: item.object_id};
+      }),
+      dependencies: (view.objects?.[item.object_id]?.dependencies || []).map(id => {
+        const match = rows.find(other => other.object_id === id && other.kind === 'AmbiguityEntry' &&
+          (item.payload?.linked_ambiguity_ids || []).includes(other.payload?.ambiguity_id));
+        return match && view.objects?.[id]?.is_current !== false && view.objects?.[id]
+          ? interpretationContent(match, view) : id;
+      })
+    });
+    const assumptions = row.kind === 'AmbiguityEntry' ? rows.filter(other => other.kind === 'AssumptionEntry' &&
+      other.question === row.question && (other.payload?.linked_ambiguity_ids || []).includes(p.ambiguity_id))
+      .map(other => ({content: interpretationContent(other, view), relations: relations(other)})) : [];
+    return canonical({content: interpretationContent(row, view), relations: relations(row), assumptions});
+  }
+  function interpretationGroups(view, items) {
+    const groups = [], rows = currentInterpretations(view);
+    for (const item of items) {
+      const key = interpretationKey(item, view, rows);
+      // This combines repeated descriptions across questions, never counts,
+      // same-question records, missing records or the underlying domain objects.
+      let group = key && groups.find(group => group.key === key && !group.questions.includes(item.question));
+      if (!group) {group = {key, items: [], questions: []}; groups.push(group);}
+      group.items.push(item); group.questions.push(item.question);
+    }
+    return groups.map(({items, questions}) => ({items, questions}));
+  }
+  function blockerItems(view, texts, aggregate = false) {
+    const rows = currentInterpretations(view), result = [];
+    const patterns = [
+      ['AmbiguityEntry', 'ambiguity_id', '题意歧义待解决或带条件假设', '题意仍待明确或带条件推进'],
+      ['AssumptionEntry', 'assumption_id', '假设尚未明确采纳或拒绝', '假设仍待判断是否采用'],
+      ['AssumptionEntry', 'assumption_id', '已接受假设仍待实际核验', '已采用假设，待实际核验']
+    ];
+    for (const text of new Set(texts)) {
+      let matches = [], message = '';
+      for (const [kind, field, raw, label] of patterns) {
+        const found = rows.filter(row => row.kind === kind && view.objects?.[row.object_id] &&
+          text === `${row.question} ${raw}：${row.payload?.[field]}`);
+        if (found.length) {matches = found; message = label; break;}
+      }
+      if (matches.length !== 1) {result.push({message: text, items: [], originals: [text]}); continue;}
+      const item = matches[0];
+      const group = aggregate && result.find(entry => entry.message === message && entry.items.length &&
+        interpretationGroups(view, [...entry.items, item]).length === 1);
+      if (group) {group.items.push(item); group.originals.push(text);}
+      else result.push({message, items: [item], originals: [text]});
+    }
+    return result;
   }
 
   function marker(value) {
@@ -127,5 +209,5 @@
     return {reset: false, items, otherChanges: removed || observationChanged && items.length === 0};
   }
 
-  return {decisionItems, makeVisit, parseVisit, changeItems};
+  return {decisionItems, interpretationGroups, blockerItems, makeVisit, parseVisit, changeItems};
 });

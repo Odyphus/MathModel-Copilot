@@ -1,18 +1,22 @@
 # 安装与首次使用
 
-这是随当前源码交付的本地评审候选，尚未公开发布，也未完成全部来源许可确认。以下安装使用交付中的清洁源码或 wheel，不从假设存在的线上仓库下载。
+当前公开试用包为 **0.3.0-preview.2**。点击 [下载 Skill 压缩包](https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-latest.zip)，把它发给能够读写本地文件、执行 Python 的 AI，并说：
+
+> 请帮我安装这个 MathModel Copilot Skill。先读取包内安装说明，安装到当前宿主实际使用的 Skill 目录；如果已有同名版本，不要覆盖或删除，先告诉我如何保留旧版并切换。安装完成后，告诉我怎么开始使用和进入教学模式。
+
+运行包无需先执行 `pip install`，但本机需要 Python 3.10+。完整源码、Python wheel 和用户 Skill 运行包是不同安装方式，按下面对应路径操作。公开访问和完整来源许可确认分开记录，见 [许可范围](../LICENSE_SCOPE.md)。
 
 ## 先体验：不用安装 Python 分发包
 
-发给内测用户时使用文件名含 `runtime-review` 的用户运行包。解压后只有根目录一个 `SKILL.md`，让 AI 读取它即可；需要注册时执行下面的显式安装工具。文件名含 `source-review` 的完整源码包用于维护、测试和插件开发，包含多个不同用途的发现入口，不应整目录复制到宿主的自动 Skill 扫描目录。
+普通用户使用上面的 `MathModel-Copilot-v0.3-Preview.zip`，其中版本和文件清单可从 `RELEASE_METADATA.json` 与 `RELEASE_MANIFEST.json` 核对。维护工具生成的 `runtime-review` 也是同一种运行布局。解压后只有根目录一个 `SKILL.md`，让 AI 读取它即可；需要注册时执行下面的显式安装工具。文件名含 `source-review` 的完整源码包用于维护、测试和插件开发，包含多个不同用途的发现入口，不应整目录复制到宿主的自动 Skill 扫描目录。
 
 本机已有 Python 3.10+ 时，解压后可以直接读取根目录 `SKILL.md`，用 `python scripts/copilot.py --workspace ../demo-project demo` 开始真实合成演示，再用同一前缀执行 `status` 或 `dashboard --port 8765`。核心、合成示例和建模工作台都使用标准库，不需要先运行 pip。
 
 让本地 AI 工具读取该文件是显式使用入口，不等于已完成宿主的自动 Skill 注册；也不会写入全局 Skill 目录。详细的可复制提示见 [内测使用说明](../内测使用说明.md)。练习项目放在源码之外，demo 目录必须为空或不存在。真实赛题用另一个工作区 `init`，不要混用演示状态。
 
-## 可选 Python 分发安装
+## 可选 Python 分发安装（仅完整源码或 wheel）
 
-要求 Python 3.10+。建议在独立环境中安装，用户工作区放在环境和源码目录之外。
+下载按钮提供的运行包不含 `pyproject.toml`，不要在该目录执行 `pip install .`。以下命令用于完整开发源码或已构建的 wheel。要求 Python 3.10+。建议在独立环境中安装，用户工作区放在环境和源码目录之外。
 
 Windows PowerShell，在解包后的源码根目录：
 
@@ -58,6 +62,8 @@ mathmodel-copilot --workspace ../demo-project view --git
 
 未安装 Git、不是仓库或没有账号时，默认本地模式继续可用。这些命令不创建仓库、不联网同步、不推送。
 
+需要队内 GitHub 协作时，另外安装官方 [GitHub CLI](https://cli.github.com/) 并由本人完成登录。可以请 AI 检查账号、帮助创建私有队伍仓库，并在你提供队友 GitHub 用户名和具体邀请授权后发送写权限邀请。命令与未验证边界见 [GitHub 协作说明](GIT_COLLABORATION.md)；这一步不会自动上传项目文件。
+
 ## 依赖分组
 
 | 分组 | 使用场景 |
@@ -75,7 +81,7 @@ mathmodel-copilot --workspace ../demo-project view --git
 
 ## Skill / plugin 发现与旧名兼容
 
-主发现名为 `$mathmodel-copilot`。Python 安装不会自动写入全局或用户 Skill 目录。需要让宿主发现时，从清洁源码执行：
+主发现名为 `$mathmodel-copilot`。Python 安装不会自动写入全局或用户 Skill 目录。需要让宿主发现时，从解压后的运行包或完整源码根目录执行：
 
 ```console
 python tools/install_skill.py --directory ../isolated-skills

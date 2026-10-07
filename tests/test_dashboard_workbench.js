@@ -26,9 +26,10 @@ test('decisions come only from structured current interpretation rows, ordered b
   const low = interpretation('low', 'AmbiguityEntry', 'open', 'low');
   const high = interpretation('high', 'AmbiguityEntry', 'open', 'high');
   const medium = interpretation('medium', 'AssumptionEntry', 'proposed');
-  v.status.interpretations = [low, high, medium];
-  assert.deepEqual(ui.decisionItems(v), [high, medium, low]);
-  assert.equal(ui.decisionItems(v)[0], high, 'existing fields and evidence are preserved, not invented');
+  const critical = interpretation('critical', 'AmbiguityEntry', 'open', 'critical');
+  v.status.interpretations = [low, high, medium, critical];
+  assert.deepEqual(ui.decisionItems(v), [critical, high, medium, low]);
+  assert.equal(ui.decisionItems(v)[0], critical, 'existing fields and evidence are preserved, not invented');
 });
 test('conditional open ambiguity remains a discussion item while accepted is not mathematical validation', () => {
   const v = view();
@@ -54,6 +55,51 @@ test('missing projection never falls back to old objects or keyword matching', (
   v.status.blockers = ['等待人工确认'];
   v.objects.old = {kind: 'AmbiguityEntry', payload: {status: 'open'}};
   assert.deepEqual(ui.decisionItems(v), []);
+});
+
+function sharedInterpretations(){
+  const v=view();
+  v.status.interpretations=['Q1','Q2'].flatMap(question=>{
+    const ambiguity=interpretation('ambiguity.'+question,'AmbiguityEntry','open','medium',{question,payload:{question,ambiguity_id:'AMB-'+question,source_anchor:'题目同一段',interpretations:['母线侧','电池侧'],severity:'medium',impact:'改变边界',status:'open',resolution:'',requirement_ids:['REQ-'+question]}});
+    const assumption=interpretation('assumption.'+question,'AssumptionEntry','accepted','medium',{question,mathematical_validation:'pending',payload:{question,assumption_id:'ASM-'+question,statement:'暂以母线侧为准',status:'accepted',rationale:'可逆基线',linked_ambiguity_ids:['AMB-'+question],linked_requirement_ids:['REQ-'+question],review:{action:'accept',rationale:'等待检查',at:question}}});
+    return [ambiguity,assumption];
+  });
+  for(const row of v.status.interpretations)v.objects[row.object_id]={id:row.object_id,kind:row.kind,is_current:true,status:'recorded',effective_status:'recorded',current_errors:[],payload:row.payload,files:[],dependencies:row.kind==='AssumptionEntry'?['ambiguity.'+row.question]:[]};
+  return v;
+}
+test('only identical cross-question interpretations group while retaining exact member objects',()=>{
+  const v=sharedInterpretations(),before=JSON.stringify(v);
+  const groups=ui.interpretationGroups(v,ui.decisionItems(v));
+  assert.equal(groups.length,1);assert.deepEqual(groups[0].questions,['Q1','Q2']);
+  assert.equal(groups[0].items[0],v.status.interpretations[0]);assert.equal(groups[0].items[1],v.status.interpretations[2]);
+  assert.equal(ui.decisionItems(v).length,2,'the per-question API remains ungrouped');
+  assert.equal(JSON.stringify(v),before);
+});
+test('same title or statement never merges different semantics, states, severity, evidence or choices',()=>{
+  for(const mutate of [r=>{r.payload.interpretations[0]='另一端口';},r=>{r.payload.status='resolved';},r=>{r.status='resolved';},r=>{r.payload.severity='high';},r=>{r.freeze_gate='conditional';},r=>{r.payload.resolution='电池侧';},r=>{r.payload.review={selected_interpretation:'电池侧'};},r=>{r.current_errors=['来源变化'];},r=>{r.payload.source_anchor='另一段';},r=>{r.payload.impact='不同影响';},r=>{r.payload.new_semantic_field='不同值';}]){
+    const v=sharedInterpretations();mutate(v.status.interpretations[2]);
+    assert.equal(ui.interpretationGroups(v,[v.status.interpretations[0],v.status.interpretations[2]]).length,2);
+  }
+  for(const mutate of [r=>{r.payload.statement='暂以电池侧为准';},r=>{r.payload.status='rejected';},r=>{r.mathematical_validation='validated_checks';},r=>{r.payload.review.rationale='不同理由';},r=>{r.payload.validation_plan='不同检查';}]){
+    const v=sharedInterpretations();mutate(v.status.interpretations[3]);
+    assert.equal(ui.interpretationGroups(v,[v.status.interpretations[1],v.status.interpretations[3]]).length,2);
+    assert.equal(ui.interpretationGroups(v,ui.decisionItems(v)).length,2,'different related assumption choices also separate ambiguities');
+  }
+});
+test('missing, historical, conflicting or same-question records cannot silently merge',()=>{
+  for(const mutate of [v=>{delete v.objects['ambiguity.Q2'];},v=>{v.objects['ambiguity.Q2'].is_current=false;},v=>{v.status.interpretations[2].question='Q1';},v=>{v.status.interpretations[2].payload.interpretations=[];},v=>{v.objects['ambiguity.Q2'].dependencies=['unknown'];},v=>{v.objects['ambiguity.Q2'].payload={...v.objects['ambiguity.Q2'].payload,resolution:'不同对象详情'};},v=>{v.objects['ambiguity.Q2'].files=[{path:'不同来源.md'}];}]){
+    const v=sharedInterpretations();mutate(v);
+    assert.equal(ui.interpretationGroups(v,[v.status.interpretations[0],v.status.interpretations[2]]).length,2);
+  }
+});
+test('structured assumption blockers retain every exact reason and never infer content from an id',()=>{
+  const v=sharedInterpretations(),texts=['Q1 未完成','Q1 已接受假设仍待实际核验：ASM-Q1','Q2 已接受假设仍待实际核验：ASM-Q2','Q3 已接受假设仍待实际核验：ASM-MISSING'];
+  const rows=ui.blockerItems(v,texts,true);assert.equal(rows.length,3);
+  assert.equal(rows[1].items.length,2);assert.deepEqual(rows[1].originals,texts.slice(1,3));
+  assert.equal(rows[1].items[0].payload.statement,'暂以母线侧为准');assert.equal(rows[2].items.length,0);
+  assert.equal(ui.blockerItems(v,texts).length,4,'ordinary and per-question lists do not aggregate');
+  v.status.interpretations[3].mathematical_validation='validated_checks';
+  assert.equal(ui.blockerItems(v,texts,true).length,4,'different validation states retain separate blockers');
 });
 test('cursor stores no titles, payloads, result values, or old-version objects', () => {
   const v = view();
@@ -143,16 +189,16 @@ test('cursor comparison uses only current versions, independent of object map in
   v.objects.old = {...obj, is_current: false, payload: {private: 'changed history'}};
   assert.deepEqual(ui.changeItems(v, cursor), {reset: false, items: [], otherChanges: false});
 });
-test('all four APIs leave authority and cursor untouched and never access storage or network', () => {
+test('all APIs leave authority and cursor untouched and never access storage or network', () => {
   const context = {window: {}};
   Object.defineProperty(context.window, 'localStorage', {get() {throw new Error('storage must be owned by the caller');}});
   context.fetch = () => {throw new Error('network must not be called');};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../dashboard/workbench.js'), 'utf8'), context);
   const v = view(), before = JSON.stringify(v), api = context.window.CopilotWorkbench;
   const cursor = api.makeVisit(v), cursorBefore = JSON.stringify(cursor);
-  api.decisionItems(v); api.parseVisit(cursorBefore, v); api.changeItems(v, cursor);
+  api.decisionItems(v); api.interpretationGroups(v, []); api.blockerItems(v, [], true); api.parseVisit(cursorBefore, v); api.changeItems(v, cursor);
   assert.equal(JSON.stringify(v), before); assert.equal(JSON.stringify(cursor), cursorBefore);
-  assert.deepEqual(Object.keys(api).sort(), ['changeItems', 'decisionItems', 'makeVisit', 'parseVisit']);
+  assert.deepEqual(Object.keys(api).sort(), ['blockerItems', 'changeItems', 'decisionItems', 'interpretationGroups', 'makeVisit', 'parseVisit']);
 });
 test('missing observation metadata disables only the optional local cursor', () => {
   const v = view(); delete v.file_observation_hash;

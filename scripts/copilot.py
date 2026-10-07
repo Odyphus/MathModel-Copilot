@@ -22,7 +22,7 @@ from copilot_payload import CONFIGURE_METADATA, TARGETS, check_keywords, payload
 
 
 def parser():
-    p = argparse.ArgumentParser(description="MathModel Copilot v0.3.0-preview.1 — versioned modeling, evidence and collaboration")
+    p = argparse.ArgumentParser(description="MathModel Copilot v0.3.0-preview.2 — versioned modeling, evidence and collaboration")
     p.add_argument("--workspace", type=Path, default=Path.cwd())
     sub = p.add_subparsers(dest="command", required=True)
     def command(name, help_text, mutation=False):
@@ -245,6 +245,9 @@ def main(argv=None):
     args = parser().parse_args(argv)
     try:
         result = execute(args)
+        if args.command == "git" and isinstance(result, dict) and result.get("ok") is False:
+            print(json.dumps({"ok": False, "result": result}, ensure_ascii=False, indent=2, allow_nan=False))
+            return 2
         print(json.dumps({"ok": True, "result": result}, ensure_ascii=False, indent=2, allow_nan=False))
         return 0
     except (ValueError, OSError, KeyError, TypeError) as exc:

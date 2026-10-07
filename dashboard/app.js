@@ -47,7 +47,9 @@
   const ruleNames={language:'论文语言',minimum_font_size_pt:'最小字号',first_page:'首页要求',page_header:'页眉要求',page_limit:'页数限制',anonymity:'匿名要求',ai_disclosure:'人工智能工具使用说明'};
   const outputNames={single_algorithm:'单工序调度算法',two_algorithm:'双工序调度算法',fault_algorithm:'故障与维修算法',algorithm_cases:'算法检查',technical_summary:'技术说明',conservation:'流量守恒检查',capacity_and_policy:'通行能力与策略检查',selection_and_sensitivity:'方案选择与敏感性检查'};
   const hasChinese=s=>/[\u3400-\u9fff]/u.test(String(s||''));
-  const opaque=/\b[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}\b|\b(?:RUN|CHECK)-[0-9a-fA-F]{12,}(?:@\d+)?\b|\b(?:REQ|REQOBJ|OBJ|CLAIM|PAPER|PARAM|PSET|MSOBJ)-[A-Za-z0-9_.-]+(?:@\d+)?\b|\bT-(?:Q\d+[A-Za-z0-9_.-]*|[0-9a-fA-F]{12,})(?:@\d+)?\b|\b[A-Za-z_][\w.-]*@\d+\b|\b[0-9a-fA-F]{12,}\b|\b(?:model|params|problem|data|code|plan|result|paper)\.[A-Za-z0-9_.-]+(?:@\d+)?/g;
+  // Long digits (including decimal tails and scientific notation) are data,
+  // not bare hashes. Numeric hashes require an explicit identifier/hash context.
+  const opaque=/\b[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}\b|\b(?:RUN|CHECK)-[0-9a-fA-F]{12,}(?:@\d+)?\b|\b(?:REQ|REQOBJ|OBJ|CLAIM|PAPER|PARAM|PSET|MSOBJ)-[A-Za-z0-9_.-]+(?:@\d+)?\b|\bT-(?:Q\d+[A-Za-z0-9_.-]*|[0-9a-fA-F]{12,})(?:@\d+)?\b|\b[A-Za-z_][\w.-]*@\d+\b|(?:\b(?:[Hh][Aa][Ss][Hh]|[Ss][Hh][Aa](?:-?256)?|[Mm][Dd]5|[A-Za-z_]+_hash)|哈希)\s*(?:[:：=]|为)?\s*[0-9a-fA-F]{12,}\b|(?<!\d\.)\b(?!\d+(?:[eEdD][+-]?\d+)?[ABCDF]?\b)[0-9a-fA-F]{12,}\b|\b(?:model|params|problem|data|code|plan|result|paper)\.[A-Za-z0-9_.-]+(?:@\d+)?/g;
   const questionLabel=value=>/^Q\d+$/i.test(String(value))?`第${Number(String(value).slice(1))}问`:hasChinese(value)?String(value):'';
   const statusLabel=(state,object={})=>object.is_current===false?'旧版本':states[state]||'尚未确认';
   function plainText(value,fallback='这项内容尚未提供中文说明，请查看原文。'){
@@ -61,8 +63,9 @@
     if(/^Q\d+ 未完成$/.test(text))return text.replace(/Q\d+/,m=>questionLabel(m));
     if(/^Execute and independently validate Q\d+$/.test(text))return '计算并独立检查'+questionLabel(text.match(/Q\d+/)[0]);
     if(!hasChinese(text))return fallback;
-    return text.replace(opaque,'相关记录').replace(/\bQ\d+\b/g,questionLabel)
-      .replace(/\b(?:AMB|ASM)-[A-Za-z0-9_.-]+(?:@\d+)?\b/g,'相关解释记录')
+    return text.replace(opaque,'相关记录')
+      .replace(/\b(?:AMB|ASM)-(?:[A-Za-z0-9_.-]+|第\d+问-[A-Za-z0-9_.-]+)(?:@\d+)?/g,'相关解释记录')
+      .replace(/\bQ\d+\b/g,questionLabel)
       .replace(/Requirement Matrix/g,'题目要求清单').replace(/EvidenceMap/g,'结论依据').replace(/Task Context/g,'任务交接说明')
       .replace(/\bCore\b/g,'项目记录').replace(/\bCLI\b/g,'项目工具').replace(/\bStage\s*\d+/g,'当前环节')
       .replace(/awaiting_submission/g,'待提交').replace(/historical_benchmark/g,'历史题目练习')
@@ -148,7 +151,7 @@
   }
   function nextAction(v) {
     const decisions=workbench.decisionItems(v);
-    if(decisions.length){const item=decisions[0];return `${questionLabel(item.question)||'当前项目'}：${item.current_errors?.length?'先重新核对题意或假设的依据':item.kind==='AmbiguityEntry'?'比较题意的不同解释，再确定采用口径':'判断是否采用这项建模假设'}。`;}
+    if(decisions.length){const group=workbench.interpretationGroups(v,decisions)[0],item=group.items[0];return `${group.questions.map(questionLabel).filter(Boolean).join('、')||'当前项目'}：${item.current_errors?.length?'先重新核对题意或假设的依据':item.kind==='AmbiguityEntry'?'比较题意的不同解释，再确定采用口径':'判断是否采用这项建模假设'}。`;}
     const confirmations = pendingConfirmations(v);
     if (confirmations.length) return plainText(confirmations[0], '有一项工作需要你确认，请查看下面的说明。');
     const task = v.status.current_task && (v.tasks[v.status.current_task.id] || v.status.current_task);
@@ -238,7 +241,21 @@
   }
   function objectLink(o,label) {if(!o)return el('span','muted','记录尚未提供');const b=button(label||titleOf(o),e=>openDetail(o,e.currentTarget),'object-link');b.dataset.objectId=idOf(o)||'';if(o.kind==='Requirement'){const context=requirementContext(o.payload?.definition);if(context)b.append(el('span','link-context',context));}return b;}
   function resolve(id) {return byId(id)?objectLink(byId(id)):el('span','muted','关联内容未读取到，请刷新后再查看。');}
-  function blockers(items) {const ul=el('ul','block-list');[...new Set(items)].forEach(text=>put(ul,put(el('li'),icon('alert'),explained(text))));return ul;}
+  function blockers(items,aggregate=false) {
+    const ul=el('ul','block-list');
+    workbench.blockerItems(view,items,aggregate).forEach(entry=>{
+      const content=el('div');
+      if(!entry.items.length){content.append(explained(entry.message));if(/\b(?:AMB|ASM)-/.test(entry.message))content.append(originalText(entry.message,'查看原始诊断'));}
+      else {
+        const questions=entry.items.map(item=>questionLabel(item.question)).filter(Boolean).join('、');
+        content.append(el('p','',`${questions} · ${entry.message}`));
+        const p=entry.items[0].payload;
+        content.append(explained(p.statement||(p.interpretations||[]).join('；'),'内容已登记，请展开查看原文。'));
+        content.append(disclosure('查看关联记录与诊断',...entry.items.map(item=>objectLink(byId(item.object_id),`${questionLabel(item.question)||'相关小问'} · 查看完整记录`)),el('pre','source-content',entry.originals.join('\n'))));
+      }
+      ul.append(put(el('li'),icon('alert'),content));
+    });return ul;
+  }
   function stateHint(o) {
     if(o.is_current===false)return '已有更新版本，这份记录保留供回看。';
     if(errorsOf(o).length)return plainText(errorsOf(o)[0],'这项内容还需要处理，请展开查看具体原因。');
@@ -264,7 +281,7 @@
       if(decisions.length)panel.append(disclosure('本问需要判断的事项',...decisions.map(decisionCard)));
       if(rows.length)panel.append(disclosure('逐项查看题目要求',listRows(rows,['需要完成什么','当前情况'])));
       if(group.tasks.length)panel.append(disclosure('任务安排与产出',objectTable(group.tasks.map(taskObject))));
-      const bases=group.objects.filter(o=>['ModelSpec','ParameterSet','DataContract','ProblemContract'].includes(o.kind));
+      const bases=group.objects.filter(o=>['ModelSpec','ParameterSet','DataContract','ProblemContract','AmbiguityEntry','AssumptionEntry'].includes(o.kind));
       if(bases.length)panel.append(disclosure('方案、假设与数据',objectTable(bases)));
       if(group.results.length)panel.append(disclosure('本问结果',objectTable(group.results)));
     } else panel.append(button('查看本问详情',()=>{navigate('questions');document.querySelector(`[data-question="${group.name}"]`)?.scrollIntoView({block:'start'});},'object-link small-gap'));
@@ -283,10 +300,12 @@
     panel.append(el('p','small-gap',s.ready?'当前已具备待提交条件，实际提交仍需单独完成。':modeLabel(view.identity.problem?.evaluation_mode)==='历史题目练习'?'当前为历史题目练习；正式提交条件尚未满足。':'正式提交条件尚未满足。'));
     panel.append(button('查看论文与材料',()=>navigate('paper'),'object-link small-gap'));return panel;
   }
-  function decisionCard(item) {
-    const p=item.payload||{},ambiguous=item.kind==='AmbiguityEntry',row=put(el('article','decision-item'),el('h3','',`${questionLabel(item.question)||'当前项目'} · ${ambiguous?'这道题应该怎样理解':'是否采用这项假设'}`));
+  function decisionCard(item,members) {
+    members=Array.isArray(members)?members:[item];
+    const questions=members.map(member=>questionLabel(member.question)).filter(Boolean).join('、')||'当前项目';
+    const p=item.payload||{},ambiguous=item.kind==='AmbiguityEntry',row=put(el('article','decision-item'),el('h3','',`${questions} · ${ambiguous?'这道题应该怎样理解':'是否采用这项假设'}`));
     row.dataset.decisionId=item.object_id;
-    const severity={high:'影响较大',medium:'影响中等',low:'影响较小'}[p.severity];
+    const severity={critical:'影响重大',high:'影响较大',medium:'影响中等',low:'影响较小'}[p.severity];
     if(item.current_errors?.length)row.append(notice('依据需要重新检查','请先核对相关文件，再继续判断。'));
     if(severity)row.append(el('p','muted small',severity));
     if(ambiguous){const options=el('ol','decision-options');(p.interpretations||[]).forEach(option=>options.append(put(el('li'),explained(option,'这项解释已登记，请展开查看原文。'))));row.append(options);}
@@ -294,8 +313,8 @@
     if(p.impact)row.append(put(el('div','decision-impact'),el('strong','','会影响什么'),explained(p.impact,'影响已登记，请展开查看原文。')));
     if(p.rationale)row.append(put(el('div','small-gap'),el('strong','','提出依据'),explained(p.rationale,'提出依据已登记，请展开查看原文。')));
     row.append(el('p','muted small small-gap',item.freeze_gate==='conditional'?'已有可逆假设支持带条件推进；题意仍未解决，需要后续检查。':item.current_errors?.length?'原解释记录仍可回看，但不能视为当前有效依据。':item.status==='open'||item.status==='proposed'?'请在 AI 对话中说明选择与理由，再按项目流程登记。页面不会替你选择。':'选择已记录；是否通过实际检查请查看下方记录。'));
-    const object=byId(item.object_id);if(object)row.append(objectLink(object,'查看完整记录与依据'));
-    const text=[`请基于最新项目状态，与我讨论${questionLabel(item.question)||'当前项目'}的${ambiguous?'题意解释':'建模假设'}。`,ambiguous?`候选解释：\n${(p.interpretations||[]).map((x,i)=>`${i+1}. ${x}`).join('\n')}`:`假设：${p.statement||''}`,`影响：${p.impact||'尚未登记'}`,p.rationale?`提出依据：${p.rationale}`:'','请比较适用条件与验证方法；目前没有在页面作出选择，请不要把复制提纲当作采用或核验。'].filter(Boolean).join('\n\n');
+    members.forEach(member=>{const object=byId(member.object_id);if(object)row.append(put(el('div'),objectLink(object,members.length>1?`${questionLabel(member.question)||'相关小问'} · 查看完整记录与依据`:'查看完整记录与依据')));});
+    const text=[`请基于最新项目状态，与我讨论${questions}的${ambiguous?'题意解释':'建模假设'}。`,ambiguous?`候选解释：\n${(p.interpretations||[]).map((x,i)=>`${i+1}. ${x}`).join('\n')}`:`假设：${p.statement||''}`,`影响：${p.impact||'尚未登记'}`,p.rationale?`提出依据：${p.rationale}`:'','请比较适用条件与验证方法；目前没有在页面作出选择，请不要把复制提纲当作采用或核验。'].filter(Boolean).join('\n\n');
     const copy=disclosure('与 AI 继续讨论',el('p','muted small','复制到现有 AI 对话后，助手才会收到。'));
     const draft=el('textarea','discussion-text');draft.readOnly=true;draft.value=text;draft.setAttribute('aria-label','可复制的讨论提纲');
     copy.append(draft,button('复制讨论提纲',async()=>{try{await navigator.clipboard.writeText(text);toast('已复制，粘贴到 AI 对话即可继续讨论。');}catch{draft.focus();draft.select();toast('请手动复制已选中的讨论提纲。');}}));row.append(copy);return row;
@@ -328,7 +347,7 @@
     if(confirmations.length||decisions.length)next.append(button('查看待确认事项',()=>{$('confirmation-list')?.scrollIntoView({block:'start'});},'button'));
     else next.append(button('查看相关工作',()=>navigate(currentProblems(view).length?'results':view.status.current_task&&stateOf(view.tasks[view.status.current_task.id]||view.status.current_task)!=='completed'?'questions':'paper')));
     f.append(next);
-    if(decisions.length){const panel=section('需要你判断',`${decisions.length} 项已登记事项`);panel.id='confirmation-list';panel.classList.add('decision-panel');decisions.slice(0,3).forEach(item=>panel.append(decisionCard(item)));if(decisions.length>3)panel.append(disclosure(`展开其余 ${decisions.length-3} 项`,...decisions.slice(3).map(decisionCard)));f.append(panel);}
+    if(decisions.length){const groups=workbench.interpretationGroups(view,decisions),card=group=>decisionCard(group.items[0],group.items),panel=section('需要你判断',groups.length===decisions.length?`${decisions.length} 项已登记事项`:`${groups.length} 项问题 · ${decisions.length} 条各问记录`);panel.id='confirmation-list';panel.classList.add('decision-panel');groups.slice(0,3).forEach(group=>panel.append(card(group)));if(groups.length>3)panel.append(disclosure(`展开其余 ${groups.length-3} 项`,...groups.slice(3).map(card)));f.append(panel);}
     const groups=questionGroups(view),columns=el('div','columns overview-columns'),left=el('div'),right=el('div');
     const questions=section('各小问进展');
     if(groups.length)groups.forEach(g=>questions.append(questionPanel(g)));else questions.append(empty('从题目要求开始','项目还没有记录各小问的要求。完成审题并登记后，这里会显示进展。'));
@@ -337,7 +356,7 @@
     if(results.length){const panel=section('主要成果');panel.append(objectTable(results));panel.append(button('查看结论、图表与依据',()=>navigate('results'),'object-link small-gap'));left.append(panel);}
     if(confirmations.length){const panel=section('需要你确认');if(!decisions.length)panel.id='confirmation-list';panel.append(blockers(confirmations));right.append(panel);}
     const problems=currentProblems(view),general=(view.status.blockers||[]).filter(x=>!confirmations.includes(x)&&!decisions.some(item=>[`${item.question} 题意歧义待解决或带条件假设：${item.payload.ambiguity_id}`,`${item.question} 假设尚未明确采纳或拒绝：${item.payload.assumption_id}`].includes(x)));
-    if(problems.length||general.length){const panel=section('待解决问题');if(general.length)panel.append(blockers(general));if(problems.length)panel.append(objectTable(problems.slice(0,5)));if(problems.length>5)panel.append(button(`查看全部 ${problems.length} 项问题`,()=>{filters.status='all';filters.category='all';navigate('results');},'object-link small-gap'));right.append(panel);}
+    if(problems.length||general.length){const panel=section('待解决问题');if(general.length)panel.append(blockers(general,true));if(problems.length)panel.append(objectTable(problems.slice(0,5)));if(problems.length>5)panel.append(button(`查看全部 ${problems.length} 项问题`,()=>{filters.status='all';filters.category='all';navigate('results');},'object-link small-gap'));right.append(panel);}
     const affected=problems.filter(o=>stateOf(o)==='stale');
     if(affected.length){const panel=section('变化对当前工作的影响');panel.append(el('p','',`${affected.length} 项当前记录需要重新检查。受影响的结果与论文，应在检查后再继续使用。`));panel.append(button('查看变化记录',()=>navigate('changes'),'object-link small-gap'));right.append(panel);}
     const paper=paperSummary();if(paper)right.append(paper);

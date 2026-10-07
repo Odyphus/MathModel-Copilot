@@ -1,11 +1,11 @@
 ---
 name: mathmodel-copilot
-description: MathModel Copilot v0.3.0-preview.1, an evidence-based mathematical-modeling competition workflow built on mathmodel-skill. Use for CUMCM, MCM/ICM, Diangong or custom modeling contests, including requirements, per-question modeling, actual Python runs, independent validation, paper assembly, team handoff and submission audit. Preserves ten stages and Critic/Red Team. Do not trigger for unrelated data analysis or ordinary paper review. Maintenance requests modify the skill rather than start a contest.
+description: MathModel Copilot v0.3.0-preview.2, an evidence-based mathematical-modeling competition workflow built on mathmodel-skill. Use for CUMCM, MCM/ICM, Diangong or custom modeling contests, including requirements, per-question modeling, actual Python runs, independent validation, paper assembly, team handoff and submission audit. Preserves ten stages and Critic/Red Team. Do not trigger for unrelated data analysis or ordinary paper review. Maintenance requests modify the skill rather than start a contest.
 ---
 
 # MathModel Copilot (v0.3) · Preview
 
-当前公测候选为 v0.3.0-preview.1，Python 分发版本为 0.3.0rc1（同一候选的 PEP 440 表示），兼容既有权威状态 schema。主名 mathmodel-copilot，旧 mathmodel-skill 只作显式可选兼容入口。含数字的章节按 [来源与结构协议](docs/SECTION_V012.md) 登记，舍入展示使用 [明确精度合同](docs/DISPLAY_V012.md)，最终装配按 [论文来源回读协议](docs/PAPER_CHAIN_V012.md) 核验；DOCX 符号、字段及未知内容按 [行内支持边界](docs/DOCX_INLINE_V013.md) 明确处理或拒绝。
+当前公测候选为 v0.3.0-preview.2，Python 分发版本为 0.3.0rc2（同一候选的 PEP 440 表示），兼容既有权威状态 schema。主名 mathmodel-copilot，旧 mathmodel-skill 只作显式可选兼容入口。含数字的章节按 [来源与结构协议](docs/SECTION_V012.md) 登记，舍入展示使用 [明确精度合同](docs/DISPLAY_V012.md)，最终装配按 [论文来源回读协议](docs/PAPER_CHAIN_V012.md) 核验；DOCX 符号、字段及未知内容按 [行内支持边界](docs/DOCX_INLINE_V013.md) 明确处理或拒绝。
 
 基于 mathmodel-skill v6.2.0，保留 Stage 0–9、按子问循环、Competition Pack、Critic/Red Team、初始化、状态查看和论文装配。用版本化需求、任务与实际证据驱动完成状态；Stage 只导航，评分只建议。
 
@@ -29,6 +29,8 @@ description: MathModel Copilot v0.3.0-preview.1, an evidence-based mathematical-
 对用户采用统一产品名称：Dashboard 称“建模工作台”，Requirement Matrix 称“题目要求清单”，Task Context 称“任务交接说明”，report 称“项目进展简报”。给 AI 讨论题目的内容叫“建模意见”，给开发者改产品的内容叫“使用反馈”；只有反馈发送器核对真实回执后才可声称已送达。其他名称按需查 [产品术语与文案规范](docs/PRODUCT_LANGUAGE.md)。中文表达不改变命令、内部类型或状态含义；“已检查”须交代对象与范围，不能泛称模型已正确或论文已通过。
 
 用户任何时候说“进入教学模式”或请求学习某项功能，都读取 `experience tutorial --topic all` 或具体专题，按其目标讲解；首次跳过、关闭提示和已经学过均不关闭手动入口。无需项目即可学习。退出教学不重置进度，重新观察后续接。工作台“使用帮助”读取同一功能目录；复制请求不能宣称已唤醒 AI。
+
+用户希望通过 GitHub 与队友协作、创建队伍仓库或邀请队友时，读取 [私有队伍仓库引导](references/github_team_setup.md)。先检查 GitHub CLI 与登录身份，沿用本人已明确的建仓授权创建空私有仓库；未明确仓库名时给出建议并确认具体目标。创建后提示用户提供队友的 GitHub 用户名，确认目标仓库和写入权限后发送邀请，分别报告邀请已发送、仍待接受和已有权限。只读预检不作远端更改；不能从建仓授权推导上传所有项目资料的许可。实际资料交换按 [Git 协作说明](docs/GIT_COLLABORATION.md) 先启用本地权威保护，再明确交接文件；Git 合并不增加采用或核验状态。
 
 首次准备额外留存过程前，按 [个人复盘与续接协议](references/experience_runtime.md) 简短说明本机留存、收尾和续接范围，记录本人选择；未回答不额外采集且继续建模。有效授权内，开启本段记录，在重要纠正/取舍/失败恢复时及时保留有来源的片段，本段结束自动生成并回读本地复盘；不等用户再次索要总结，不用最后的回忆冒充原始过程。被强制关闭时没有后台保证。跨项目偏好/经验和对外分享各自授权，不能从本地保存推导公开许可。
 

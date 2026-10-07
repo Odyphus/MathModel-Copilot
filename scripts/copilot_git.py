@@ -604,9 +604,11 @@ def verify_workspace(workspace):
 
 
 def parser():
-    p = argparse.ArgumentParser(description="Optional local Git collaboration; no network or auto merge")
+    p = argparse.ArgumentParser(description="Optional Git collaboration; team setup uses GitHub only when requested, no auto merge")
     p.add_argument("--workspace", type=Path, default=Path.cwd())
     sub = p.add_subparsers(dest="command", required=True)
+    s = sub.add_parser("team", help="检查 GitHub 登录、创建私有队伍仓库或邀请队友")
+    s.add_argument("arguments", nargs=argparse.REMAINDER)
     for name in ("status", "diff"):
         s = sub.add_parser(name)
         s.add_argument("--compare", required=name == "diff")
@@ -657,6 +659,9 @@ def _write_new(root, name, result):
 
 def execute(args):
     root = args.workspace.resolve()
+    if args.command == "team":
+        from copilot_github import execute as team_execute, parser as team_parser
+        return team_execute(team_parser().parse_args(["--workspace", str(root), *args.arguments]))
     if args.command == "status": return repository_status(root, args.compare)
     if args.command == "diff": return diff_report(root, args.compare, patch=args.patch)
     if args.command == "protect": return protect(root)
@@ -678,7 +683,7 @@ def main(argv=None):
     try:
         result = execute(parser().parse_args(argv))
         print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 0
+        return 2 if isinstance(result, dict) and result.get("ok") is False else 0
     except (ValueError, OSError, KeyError, TypeError) as exc:
         print(json.dumps({"error": type(exc).__name__, "message": str(exc)}, ensure_ascii=False))
         return 2

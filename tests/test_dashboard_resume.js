@@ -84,6 +84,36 @@ function harness({saved=storage(),hash='#questions'}={}){
   const navigate=page=>document.getElementById('nav-'+page).click();
   return {document,window,requests,fileRequests,settle,settleFile,fail,content,detail,openParameters,findButton,reload,navigate,saved,clock,location};
 }
+
+// An external captured observation can be replayed without copying project state
+// into the repository. The normal synthetic suite below remains self-contained.
+test('captured round-one overview groups shared decisions and shows all actual assumption statements',
+  {skip:!process.env.COPILOT_DASHBOARD_SNAPSHOT},async()=>{
+  const v=JSON.parse(fs.readFileSync(process.env.COPILOT_DASHBOARD_SNAPSHOT,'utf8'));
+  const before=JSON.stringify(v),h=harness({hash:'#overview'});await h.settle(0,v);
+  const root=h.document.getElementById('content'),cards=walk(root).filter(n=>n.className.split(' ').includes('decision-item'));
+  assert.equal(cards.length,2,'four question-specific decisions represent two identical shared issues');
+  assert(cards.every(card=>card.querySelector('h3').textContent.startsWith('第1问、第2问')));
+  const visible=node=>node.tagName==='details'&&!node.open?node.querySelector('summary')?.textContent||'':node.text+node.children.map(visible).join('');
+  assert.doesNotMatch(visible(root),/ASM-|AMB-|interpretation\./);
+  const assumptions=v.status.interpretations.filter(r=>r.kind==='AssumptionEntry'&&r.status==='accepted');
+  assert.equal(assumptions.length,6);
+  const problems=walk(root).find(n=>n.tagName==='section'&&n.querySelector('h2')?.textContent==='待解决问题');
+  assert.equal(problems.querySelectorAll('li').length,6,'three incomplete questions plus three shared assumptions');
+  for(const statement of new Set(assumptions.map(r=>r.payload.statement)))assert(visible(problems).includes(statement));
+  for(const item of [...v.status.interpretations]){
+    const link=walk(root).find(n=>n.dataset.objectId===item.object_id);assert(link,`${item.object_id} retains its own detail link`);
+    link.click();assert.match(h.detail(),/采用不等于|实际|题意解释|建模假设/);
+  }
+  h.navigate('questions');
+  const qroot=h.document.getElementById('content');
+  for(const question of ['Q1','Q2']){
+    const panel=walk(qroot).find(n=>n.dataset.question===`第${question.slice(1)}问`);assert(panel);
+    assert.equal(panel.querySelectorAll('.decision-item').length,2);
+    for(const item of assumptions.filter(r=>r.question===question))assert(walk(panel).some(n=>n.dataset.objectId===item.object_id));
+  }
+  assert.equal(JSON.stringify(v),before,'rendering never mutates the captured authority projection');
+});
 test('canonical ParameterSet entries appear with meaning value and unit in the actual detail reader',async()=>{
   const h=harness();await h.settle(0,observation());const text=h.openParameters();
   assert.match(text,/当前参数/);assert.match(text,/电池容量/);assert.match(text,/12000/);assert.match(text,/千瓦时/);assert.doesNotMatch(text,/params\.Q1|parameter_id/);
@@ -121,6 +151,22 @@ test('actual result detail shows declared meaning units and linked numeric prove
   await h.settle(0,v);walk(h.document.getElementById('content')).find(n=>n.dataset.objectId==='result').click();let detail=h.document.getElementById('detail-body');
   assert.match(detail.textContent,/储能容量/);assert.match(detail.textContent,/kWh/);assert.match(detail.textContent,/预测跨度/);assert.doesNotMatch(detail.textContent,/车辆当量|计算时长（秒）/);assert.match(detail.textContent,/数字来源与检查依据/);assert.match(detail.textContent,/不表示自然语言推论/);
   assert(walk(detail).some(n=>n.dataset.objectId==='run'));walk(detail).find(n=>n.dataset.objectId==='check').click();detail=h.document.getElementById('detail-body');assert.match(detail.textContent,/运行前已声明的标准/);assert.match(detail.textContent,/容量必须满足题设约束/);assert.match(detail.textContent,/12000/);
+});
+
+test('result list and detail preserve the real fractional cost alongside opaque evidence references',async()=>{
+  const v=observation(),h=harness({hash:'#results'}),claim='总购电费用为 3.202770083102493 元';
+  v.objects.claim={id:'CLAIM-1234567890123456@1',kind:'EvidenceMapEntry',status:'verified',is_current:true,
+    payload:{question:'Q1',claim,scope:'四时段练习'},dependencies:[],files:[],current_errors:[]};
+  await h.settle(0,v);assert(h.content().includes(claim));assert.doesNotMatch(h.content(),/3\.相关记录|CLAIM-1234567890123456/);
+  const link=walk(h.document.getElementById('content')).find(n=>n.dataset.objectId===v.objects.claim.id);assert(link);link.click();
+  assert(h.detail().includes(claim));assert.doesNotMatch(h.detail(),/3\.相关记录/);
+});
+test('a critical interpretation is visible with its actual severity in the overview',async()=>{
+  const v=observation(),h=harness({hash:'#overview'}),id='interpretation.Q1@1';
+  const payload={question:'Q1',severity:'critical',status:'open',interpretations:['母线侧','电池侧'],impact:'改变模型边界'};
+  v.objects[id]={id,kind:'AmbiguityEntry',is_current:true,payload,dependencies:[],files:[],current_errors:[]};
+  v.status.interpretations=[{object_id:id,kind:'AmbiguityEntry',question:'Q1',status:'open',payload,current_errors:[],freeze_gate:'blocked'}];
+  await h.settle(0,v);assert.match(h.content(),/影响重大/);assert.match(h.content(),/改变模型边界/);
 });
 test('actual decision list shows recorded reasons without treating actor as authenticated approval',async()=>{
   const h=harness(),v=observation();v.decisions=[{decision:'保留线性规划基线',reason:'先建立可复核对照',actor:'human-admin',at:'2026-10-06T00:00:00Z',evidence:[]}];await h.settle(0,v);h.document.getElementById('changes-link').click();assert.match(h.content(),/已记录的项目决策/);assert.match(h.content(),/保留线性规划基线/);assert.match(h.content(),/先建立可复核对照/);assert.match(h.content(),/未经身份认证/);assert.doesNotMatch(h.content(),/已获人工批准|已自动采用/);

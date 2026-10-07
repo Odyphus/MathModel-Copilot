@@ -1,11 +1,11 @@
 {
   "product": "MathModel Copilot",
-  "version": "0.3.0-preview.1",
-  "python_distribution_version": "0.3.0rc1",
-  "status": "private_github_preview",
+  "version": "0.3.0-preview.2",
+  "python_distribution_version": "0.3.0rc2",
+  "status": "public_github_preview",
   "maintainer": "Odyphus",
   "repository": "https://github.com/Odyphus/MathModel-Copilot",
-  "published": false,
+  "published": true,
   "public_release_allowed": false,
   "upstream": {
     "project": "mathmodel-skill",
@@ -17,9 +17,9 @@
   "release_blockers": [
     "Migrated cumcm-workflow and inherited historical simulator material require confirmed public redistribution rights",
     "Final derivative license remains unconfirmed; upstream MIT is not a blanket license",
-    "Public distribution is not performed by this private repository upload; published remains false",
     "Real GitHub feedback create/readback remains unverified and needs specific posting authorization",
-    "Automatic Skill lifecycle across live hosts, fresh-user usability and stated external validation scopes remain separately unverified"
+    "Automatic Skill lifecycle across live hosts, fresh-user usability and stated external validation scopes remain separately unverified",
+    "Real private team repository creation and teammate invitation acceptance remain unverified; offline API regressions are not live acceptance"
   ],
   "excluded_from_candidate": [
     "Historical competition PDFs, spreadsheets, parameter data and other official attachments",
@@ -28,16 +28,19 @@
     "assets/status-demo.svg: inherited navigation illustration retained only in the internal product copy; unrelated to the current Dashboard",
     "Caches, virtual environments, generated documents, outputs and prior archives"
   ],
-  "distribution_scope": "private_github_preview",
+  "distribution_scope": "public_github_preview",
   "private_beta_requested_on": "2026-10-06",
   "state_schema_changed": false,
   "state_additions": [
     "Optional interpretation objects and dependent validation through existing Store transactions",
     "Read-only factual completion reports and numeric source projections; no second authority",
-    "Private experience schema 1 and GitHub feedback receipts outside the project; no authority schema migration"
+    "Private experience schema 1 and GitHub feedback receipts outside the project; no authority schema migration",
+    "Optional GitHub team setup without Store, local Git configuration or workspace upload changes"
   ],
   "preview_preparation_requested_on": "2026-10-07",
   "development_baseline": "0.2.0-preview.2",
-  "repository_visibility": "private",
-  "repository_created_on": "2026-10-07"
+  "repository_visibility": "public",
+  "repository_created_on": "2026-10-07",
+  "public_preview_update_requested_on": "2026-10-07",
+  "publication_scope": "Owner-authorized public GitHub Preview; not a completed rights clearance or stable release acceptance"
 }
