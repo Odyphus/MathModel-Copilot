@@ -4,7 +4,7 @@
 
 一个面向数学建模比赛的 AI Skill，也是一套帮助人和 AI 持续协作的辅助系统。
 
-[直接下载压缩包](https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-v0.3-Preview.zip) · [产品理念](#产品理念) · [功能介绍](#mathmodel-copilot-能帮你做什么) · [反馈与参与](#反馈与参与)
+[直接下载压缩包](https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-latest.zip) · [产品理念](#产品理念) · [功能介绍](#mathmodel-copilot-能帮你做什么) · [反馈与参与](#反馈与参与)
 
 ## 下载后，发给 AI 安装就能开始
 

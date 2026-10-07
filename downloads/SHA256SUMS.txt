@@ -1,1 +1,2 @@
 6300fabd2b9c765e578fa554cfc856cd705ff6d44732026f9ebd47f6ca877dc2  MathModel-Copilot-v0.3-Preview.zip
+6300fabd2b9c765e578fa554cfc856cd705ff6d44732026f9ebd47f6ca877dc2  MathModel-Copilot-latest.zip
