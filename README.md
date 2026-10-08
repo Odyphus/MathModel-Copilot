@@ -7,6 +7,8 @@
   <img src="assets/pixel-readme/00-desktop.webp" alt="MathModel Copilot" width="100%">
 </picture>
 
+https://github.com/user-attachments/assets/5810bb08-c6f7-477e-a08b-7a3d2193f4c5
+
 <a id="pixel-下载后发给-ai-安装就能开始" name="pixel-下载后发给-ai-安装就能开始"></a>
 
 <picture>
