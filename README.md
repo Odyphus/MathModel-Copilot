@@ -15,7 +15,7 @@
 </picture>
 
 <p align="center">
-<a href="https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-latest.zip"><img src="assets/pixel-readme/download.webp" alt="直接下载压缩包" width="240"></a><br>
+<a href="https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-latest.zip"><img src="assets/pixel-readme/download.webp" alt="直接下载压缩包" width="240" align="center"></a>&nbsp;&nbsp;<a href="https://github.com/Odyphus/MathModel-Copilot">顺手点颗 Star 🌟，给小助手充充电～</a><br>
 <picture>
   <source media="(max-width: 640px)" srcset="assets/pixel-readme/01-mobile.webp">
   <img src="assets/pixel-readme/01-desktop.webp" alt="第一步：点击上面的下载链接，下载 Skill 压缩包。" width="100%">
