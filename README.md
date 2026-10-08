@@ -1,5 +1,3 @@
-<p align="center"><a href="https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-latest.zip"><img src="assets/pixel-readme/download.webp" alt="直接下载压缩包" width="240"></a></p>
-
 [产品理念](#user-content-pixel-产品理念) · [功能介绍](#user-content-pixel-mathmodel-copilot-能帮你做什么) · [反馈与参与](#user-content-pixel-反馈与参与)
 
 <a id="pixel-mathmodel-copilot" name="pixel-mathmodel-copilot"></a>
@@ -12,9 +10,17 @@
 <a id="pixel-下载后发给-ai-安装就能开始" name="pixel-下载后发给-ai-安装就能开始"></a>
 
 <picture>
-  <source media="(max-width: 640px)" srcset="assets/pixel-readme/01-mobile.webp">
-  <img src="assets/pixel-readme/01-desktop.webp" alt="下载后，发给 AI 安装就能开始" width="100%">
+  <source media="(max-width: 640px)" srcset="assets/pixel-readme/01-intro-mobile.webp">
+  <img src="assets/pixel-readme/01-intro-desktop.webp" alt="下载后，发给 AI 安装就能开始" width="100%">
 </picture>
+
+<p align="center">
+<a href="https://github.com/Odyphus/MathModel-Copilot/raw/refs/heads/main/downloads/MathModel-Copilot-latest.zip"><img src="assets/pixel-readme/download.webp" alt="直接下载压缩包" width="240"></a><br>
+<picture>
+  <source media="(max-width: 640px)" srcset="assets/pixel-readme/01-mobile.webp">
+  <img src="assets/pixel-readme/01-desktop.webp" alt="第一步：点击上面的下载链接，下载 Skill 压缩包。" width="100%">
+</picture>
+</p>
 
 <a id="pixel-产品理念" name="pixel-产品理念"></a>
 
