@@ -195,6 +195,10 @@ def make_server(workspace, *, port=0, host='127.0.0.1', include_git=False, asset
         do_PUT = do_PATCH = do_DELETE = do_OPTIONS = reject_write
 
     class Server(ThreadingHTTPServer):
+        # A refresh can open all JS/CSS connections while snapshot work is
+        # pending. The standard backlog of five can drop a script on Windows.
+        request_queue_size = 32
+
         def server_close(self):
             if interaction:
                 interaction.close()

@@ -145,6 +145,8 @@ def snapshot(workspace, *, include_git=False, attempts=2):
             item['effective_status'] = 'stale' if errors and item.get('status') not in {'failed','timeout','interrupted','missing_outputs'} else item.get('status', 'unknown')
             objects[oid] = item
         _numeric_views(cp, objects)
+        from copilot_comparison import comparison_view
+        comparisons = comparison_view(cp, objects)
         tasks = copy.deepcopy(cp['tasks'])
         for task in tasks.values():
             errors = {oid: status['stale_objects'][oid]
@@ -166,6 +168,7 @@ def snapshot(workspace, *, include_git=False, attempts=2):
             'requirements': copy.deepcopy(cp['requirements']), 'members': copy.deepcopy(cp['members']),
             'changes': copy.deepcopy(cp['journal']), 'decisions': copy.deepcopy(cp['decisions']),
             'collaboration': collaboration,
+            'comparisons': comparisons,
             'read_only': True, 'observation_scope': 'One authority revision and bound-file stability during this read; not a future validity guarantee'}
         result['snapshot_id'] = digest(result)
         return result

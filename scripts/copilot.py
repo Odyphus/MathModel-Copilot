@@ -7,6 +7,8 @@ structured data, never imported Python or shell commands. Output is JSON.
 from __future__ import annotations
 
 import argparse
+import importlib
+import importlib.util
 from datetime import datetime, timezone
 import json
 from pathlib import Path
@@ -21,12 +23,27 @@ from copilot_domain import load_structured, impact_analysis
 from copilot_payload import CONFIGURE_METADATA, TARGETS, check_keywords, payload_help
 
 
+DELEGATED = {name: 'copilot_' + name.replace('-', '_')
+             for name in ('git', 'data', 'forecast', 'experience', 'usage-feedback')}
+
+
+class ForwardHelp(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        # Display the actual child parser, rather than a wrapper with only
+        # an opaque "arguments" field. No project or personal record is read.
+        importlib.import_module(DELEGATED[self.const]).parser().print_help()
+        parser.exit()
+
+
 def parser():
-    p = argparse.ArgumentParser(description="MathModel Copilot v0.3.0-preview.2 — versioned modeling, evidence and collaboration")
+    p = argparse.ArgumentParser(description="MathModel Copilot v0.3.0-preview.3.dev4 — versioned modeling, evidence and collaboration")
     p.add_argument("--workspace", type=Path, default=Path.cwd())
     sub = p.add_subparsers(dest="command", required=True)
     def command(name, help_text, mutation=False):
-        s = sub.add_parser(name, help=help_text)
+        s = sub.add_parser(name, help=help_text, add_help=name not in DELEGATED)
+        if name in DELEGATED:
+            s.add_argument('-h', '--help', action=ForwardHelp, nargs=0, const=name,
+                           help='查看实际子命令和参数')
         if mutation:
             s.add_argument("--expected-revision", type=int, required=True)
             s.add_argument("--actor", default="integrator")
@@ -43,7 +60,13 @@ def parser():
     s.add_argument("--output", help="项目内新的 .md 相对路径；省略时在 JSON 的 markdown 字段返回，不覆盖已有文件")
     s = command("payload-help", "查看输入字段和示例，不修改项目状态")
     s.add_argument("target", choices=TARGETS)
-    s.add_argument("--kind", help="register: ValidationPlan；interpretation / interpretation-review: AmbiguityEntry 或 AssumptionEntry")
+    s.add_argument("--kind", help="register: CodeManifest / ValidationPlan；interpretation / interpretation-review: AmbiguityEntry / AssumptionEntry")
+    s = command("run-input", "只读准备运行输入，列出真实当前依赖；不执行或登记")
+    s.add_argument("--question", required=True)
+    for name in ('model', 'parameters', 'data', 'code', 'plan'):
+        s.add_argument('--' + name, help='存在多个候选时明确指定当前对象 ID')
+    s.add_argument('--seed', default='0', help='沿用 run 的默认记录值 0；不代表已设置外部库随机性')
+    s.add_argument('--timeout', type=float, default=60)
     s = command("view", "Read the same revision-bound observation as the Dashboard")
     s.add_argument("--git", action="store_true", help="Opt in to local Git observation")
     s = command("dashboard", "Open a local, read-only project viewer")
@@ -54,10 +77,19 @@ def parser():
     s.add_argument("--assistant-timeout", type=int, default=180, help="Read-only AI time limit in seconds, 10–900")
     s = command("git", "Optional Git collaboration; proposals still use authority transactions")
     s.add_argument("arguments", nargs=argparse.REMAINDER)
-    for name, label in (("experience", "教学、个人复盘和经验读取"),
+    for name, label in (("data", "按声明读入 CSV/XLSX，检查单位和时间槽"),
+                        ("forecast", "按预测起点和发布时间进行滚动回测"),
+                        ("experience", "教学、个人复盘和经验读取"),
                         ("usage-feedback", "使用反馈草稿、审阅与发送回执")):
         s = command(name, label + "；不修改建模权威状态")
+        if name in {"experience", "usage-feedback"}:
+            s.add_argument("--user-data", type=Path, help="个人记录目录；放在实际子命令之前")
         s.add_argument("arguments", nargs=argparse.REMAINDER)
+    s = command("paper-export", "把已有核验章节导出为原生 Word 和可选 PDF，按明确版本登记导出成果")
+    s.add_argument("--expected-revision", type=int, required=True)
+    s.add_argument("--contract", required=True, help="项目内现有 paper source 0.1 合同 JSON")
+    s.add_argument("--output", required=True, help="新建 .docx 项目相对路径")
+    s.add_argument("--pdf", help="可选新建 .pdf 项目相对路径；需要本机转换工具")
     command("requirements", "Read the complete question and output matrix")
     command("host", "Probe actual local capabilities without changing project state")
     for name in ("configure", "task", "claim", "run", "decide", "rules-lock", "stage-record", "ai-log"):
@@ -132,18 +164,34 @@ def execute(args):
             raise ValueError("payload 必须是 JSON/YAML object")
         return data
     cmd = args.command
+    if cmd in DELEGATED and not args.arguments:
+        importlib.import_module(DELEGATED[cmd]).parser().parse_args(['--help'])
+    if cmd == "run-input":
+        from copilot_run_input import prepare
+        return prepare(root, args.question, {name: getattr(args, name) for name in
+                       ('model', 'parameters', 'data', 'code', 'plan')}, seed=args.seed, timeout=args.timeout)
+    if cmd == "data":
+        from copilot_data import execute as run_data, parser as data_parser
+        return run_data(data_parser().parse_args(["--workspace", str(root), *args.arguments]))
+    if cmd == "forecast":
+        from copilot_forecast import execute as run_forecast, parser as forecast_parser
+        return run_forecast(forecast_parser().parse_args([*args.arguments, "--project-root", str(root)]))
+    if cmd == "paper-export":
+        from copilot_paper_export import export as export_paper
+        return export_paper(root, args.contract, args.output, expected_revision=args.expected_revision, pdf=args.pdf)
     if cmd == "experience":
         from copilot_experience import execute as run_experience, parser as experience_parser
-        return run_experience(experience_parser().parse_args(["--workspace", str(root), *args.arguments]))
+        private = ["--user-data", str(args.user_data)] if args.user_data is not None else []
+        return run_experience(experience_parser().parse_args(["--workspace", str(root), *private, *args.arguments]))
     if cmd == "usage-feedback":
         from copilot_usage_feedback import execute as run_feedback, parser as feedback_parser
-        return run_feedback(feedback_parser().parse_args(["--workspace", str(root), *args.arguments]))
+        private = ["--user-data", str(args.user_data)] if args.user_data is not None else []
+        return run_feedback(feedback_parser().parse_args(["--workspace", str(root), *private, *args.arguments]))
     if cmd == "payload-help": return payload_help(args.target, args.kind)
     if cmd == "report":
         from copilot_summary import report
         return report(root, output=args.output)
     if cmd == "demo":
-        import importlib.util
         entry = Path(__file__).resolve().parents[1] / "examples/mcm2009a/run_example.py"
         spec = importlib.util.spec_from_file_location("copilot_mcm_demo", entry)
         module = importlib.util.module_from_spec(spec)
@@ -242,6 +290,10 @@ def execute(args):
 
 
 def main(argv=None):
+    # Public JSON is UTF-8 even when a Windows child process defaults to GBK.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     args = parser().parse_args(argv)
     try:
         result = execute(args)
@@ -252,7 +304,12 @@ def main(argv=None):
         return 0
     except (ValueError, OSError, KeyError, TypeError) as exc:
         code = 3 if isinstance(exc, ConflictError) else 4 if isinstance(exc, IntegrityError) else 2
-        print(json.dumps({"ok": False, "error": type(exc).__name__, "message": str(exc)}, ensure_ascii=False), file=sys.stderr)
+        body = {"ok": False, "error": type(exc).__name__, "message": str(exc)}
+        from copilot_payload import recovery_hint
+        hint = recovery_hint(args.command, str(exc))
+        if hint:
+            body['recovery'] = hint
+        print(json.dumps(body, ensure_ascii=False), file=sys.stderr)
         return code
 
 

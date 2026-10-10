@@ -4,6 +4,8 @@
 
 ## 工作入口
 
+字段、重算、结论与章节衔接的短路径见 [常用流程](common_tasks.md)。`run-input --question Q1` 只读组装当前依赖，返回待运行输入及观察时版本；正式 `run` 仍进行全部检查。代码、结论、章节及结构化反馈的帮助分别为 `payload-help register --kind CodeManifest`、`payload-help claim`、`payload-help section`、`payload-help usage-feedback`。`--help` 返回文本，其余正常响应保持 JSON。
+
 `python <skill>/scripts/copilot.py --workspace <project> <command>`，所有返回值为 JSON。读操作不变更权威状态；要求版本参数的权威状态变更命令必须带从 `status` 取得的 `--expected-revision N`。`init` 创建/续接以及 `context --output`、`report --output` 的本地文件导出按各自命令参数执行，不额外添加 `--expected-revision`；导出文件不等于变更权威状态。旧 schema 迁入按表中的 `migrate --expected-revision 0` 执行。退出码 0 成功、2 输入或环境错误、3 版本冲突、4 状态完整性错误。发生冲突先重新读取累计变化，再重新作决定；不得只换新 revision 强行提交旧决定。
 
 | 操作 | 命令与必要输入 |

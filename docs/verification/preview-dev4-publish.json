@@ -1,0 +1,163 @@
+{
+  "version": "0.3.0-preview.3.dev4",
+  "publication_base": "ca019479db480d7f74f3deda3b9319a1509f8c35",
+  "tested_development_source_manifest_sha256": "1a232a62f9723bdd6f9872d95e33a82a087bf24d0e106d9d553fb4e7888f2f18",
+  "functional_files_identical_to_tested_candidate": 215,
+  "publication_only_test_adjustment": "Version contract checks the current versioned package and stable download alias, preserving the owner-approved README copy.",
+  "publication_core_tests": {
+    "run": 33,
+    "pass": 33
+  },
+  "publication_checks": [
+    {
+      "check": "compile",
+      "exit_code": 0
+    },
+    {
+      "check": "cumcm",
+      "exit_code": 0
+    },
+    {
+      "check": "mcm",
+      "exit_code": 0
+    },
+    {
+      "check": "diangong",
+      "exit_code": 0
+    },
+    {
+      "check": "diff",
+      "exit_code": 0
+    },
+    {
+      "check": "skill",
+      "exit_code": 0
+    }
+  ],
+  "development_regression": {
+    "python_total": 948,
+    "effective_pass": 942,
+    "skip": 6,
+    "initial_full_run_failures": 2,
+    "reconciliation": "Diagnostic multiprocessing entrypoint and editor interference in Git fixtures; original tests rerun with product source unchanged.",
+    "javascript_total": 123,
+    "pass": 122,
+    "skip_js": 1
+  },
+  "runtime_package": {
+    "current_version": "0.3.0-preview.3.dev4",
+    "stable_download": "MathModel-Copilot-latest.zip",
+    "compatible_download": "MathModel-Copilot-v0.3-Preview.zip",
+    "versioned_download": "MathModel-Copilot-v0.3.0-preview.3.dev4.zip",
+    "sha256": "6e63282b11a6d9029d20cd4920ae164a0edf1313c2a7a12550f251cb71d080ce",
+    "bytes": 974714,
+    "manifest_files": 282,
+    "source_manifest_sha256": "11f6bdd7252249fa4fbf310766b86cd2af4b7cc5c2c4bce5d51aed8e4777d7cd",
+    "single_skill_entry": true,
+    "deterministic_two_builds": true,
+    "integrated_remote_base": "ca019479db480d7f74f3deda3b9319a1509f8c35",
+    "history": [
+      {
+        "version": "0.3.0-preview.2",
+        "path": "MathModel-Copilot-v0.3.0-preview.2.zip",
+        "sha256": "4ae81e8e98d22509dd5c96aea029fbacdc927b8ec38edd0b4e9ca0f2332bde47",
+        "bytes": 885263
+      },
+      {
+        "version": "0.3.0-preview.1",
+        "path": "archive/MathModel-Copilot-v0.3.0-preview.1.zip",
+        "sha256": "6300fabd2b9c765e578fa554cfc856cd705ff6d44732026f9ebd47f6ca877dc2",
+        "bytes": 829901
+      }
+    ]
+  },
+  "isolated_install": {
+    "passed": true,
+    "clean_environment_optional_yaml": "absent; three metadata checks unverified in that environment",
+    "installed_doctors_with_existing_yaml_dependency": [
+      {
+        "competition": "cumcm",
+        "exit_code": 0
+      },
+      {
+        "competition": "mcm",
+        "exit_code": 0
+      },
+      {
+        "competition": "diangong",
+        "exit_code": 0
+      }
+    ],
+    "checks": [
+      {
+        "name": "archive-crc-member-set-hashes-privacy",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-install",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-one-discovery-entry",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-installed-inventory",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-demo",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-status",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-demo-complete-not-formal-ready",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-view",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-host",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-read-only-authority",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-doctor-cumcm",
+        "status": "skip"
+      },
+      {
+        "name": "runtime-doctor-mcm",
+        "status": "skip"
+      },
+      {
+        "name": "runtime-doctor-diangong",
+        "status": "skip"
+      },
+      {
+        "name": "runtime-no-overwrite",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-install-preserved",
+        "status": "pass"
+      },
+      {
+        "name": "runtime-unpacked-bytes-preserved",
+        "status": "pass"
+      }
+    ]
+  },
+  "readme_and_promotional_assets": "unchanged bytes from public base",
+  "old_versioned_packages": "preserved unchanged",
+  "remote_issue_sent": false,
+  "existing_user_install_modified": false,
+  "evidence_scope": "Local pre-push evidence; remote push and anonymous download are verified separately. Public rights boundaries remain unchanged."
+}

@@ -1,8 +1,8 @@
 """
 预测类 code starter — 对应论文 §5.x 时序预测 / 回归
-适用: 回归 / ARIMA / 灰色预测 GM(1,1) / LSTM / 组合预测
-
-国赛加分: 单一模型 + 组合预测 (e.g., ARIMA + GM(1,1) + 加权)
+适用: 回归 / ARIMA / 灰色预测 GM(1,1) / 组合预测
+回归使用 analysis extra；ARIMA 另需 statsmodels (advanced extra)。
+方法是否适用及组合是否改善结果，须由数据条件和独立验证判断。
 """
 
 import numpy as np
@@ -10,13 +10,12 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import statsmodels.api as sm
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-np.random.seed(42)
-Path("results").mkdir(exist_ok=True)
-Path("figures").mkdir(exist_ok=True)
+# Importing a starter does not create files or reset a caller's random state.
 
 
 def _safe_mape(y_true, y_pred, zero_tol=1e-12):
@@ -36,37 +35,59 @@ def _safe_mape(y_true, y_pred, zero_tol=1e-12):
 # ============================================================
 # 1. 线性 / Ridge / RF 回归
 # ============================================================
-def fit_regression(X_train, y_train, X_test, y_test, model_type="linear"):
+def _regression_metrics(actual, predicted):
+    # R2 has no finite interpretation for a singleton or constant target.
+    defined = len(actual) >= 2 and bool(np.ptp(actual) > 0)
+    return {"MAE": float(mean_absolute_error(actual, predicted)),
+            "RMSE": float(np.sqrt(mean_squared_error(actual, predicted))),
+            "R2": float(r2_score(actual, predicted)) if defined else None,
+            "R2_reason": None if defined else "fewer than two observations or constant target"}
+
+
+def fit_regression(X_train, y_train, X_test, y_test, model_type="linear", *, scale=False, random_state=42):
     """
     Args:
-        model_type: "linear" / "ridge" / "rf"
+        model_type: "linear" / "ridge" / "rf"; split supplied by caller.
+        scale: optional preprocessing fitted on the training data only.
     """
+    X_train, X_test = np.asarray(X_train, dtype=float), np.asarray(X_test, dtype=float)
+    y_train, y_test = np.asarray(y_train, dtype=float), np.asarray(y_test, dtype=float)
+    if (X_train.ndim != 2 or X_test.ndim != 2 or X_train.shape[1] == 0 or X_train.shape[1] != X_test.shape[1]
+            or len(X_train) < 2 or len(X_test) < 1 or y_train.shape != (len(X_train),) or y_test.shape != (len(X_test),)):
+        raise ValueError("回归需二维同宽特征、对应一维目标、至少两行训练及一行测试数据")
+    if any(not np.all(np.isfinite(value)) for value in (X_train, X_test, y_train, y_test)):
+        raise ValueError("回归输入含缺失或非有限值；须先声明数据处理策略")
+    if not isinstance(scale, bool):
+        raise ValueError("scale 必须为布尔值")
     if model_type == "linear":
         model = LinearRegression()
     elif model_type == "ridge":
         model = Ridge(alpha=1.0)
     elif model_type == "rf":
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
+        model = RandomForestRegressor(n_estimators=100, random_state=random_state)
     else:
         raise ValueError(model_type)
 
+    if scale:
+        model = make_pipeline(StandardScaler(), model)
     model.fit(X_train, y_train)
     y_pred_train = model.predict(X_train)
     y_pred_test = model.predict(X_test)
 
+    metrics_train = _regression_metrics(y_train, y_pred_train)
+    metrics_test = _regression_metrics(y_test, y_pred_test)
+    baseline_value = float(np.mean(y_train))
+    baseline_predictions = np.full(len(y_test), baseline_value)
+    baseline_metrics = _regression_metrics(y_test, baseline_predictions)
     return {
         "model": model,
-        "metrics_train": {
-            "MAE": mean_absolute_error(y_train, y_pred_train),
-            "RMSE": np.sqrt(mean_squared_error(y_train, y_pred_train)),
-            "R2": r2_score(y_train, y_pred_train),
-        },
-        "metrics_test": {
-            "MAE": mean_absolute_error(y_test, y_pred_test),
-            "RMSE": np.sqrt(mean_squared_error(y_test, y_pred_test)),
-            "R2": r2_score(y_test, y_pred_test),
-        },
+        "metrics_train": metrics_train,
+        "metrics_test": metrics_test,
+        "baseline_test": {"method": "training target mean", "value": baseline_value, "metrics": baseline_metrics, "predictions": baseline_predictions},
+        "mae_improvement_over_baseline": baseline_metrics["MAE"] - metrics_test["MAE"],
+        "y_pred_train": y_pred_train,
         "y_pred_test": y_pred_test,
+        "scope": "Caller-supplied holdout only; no claim that the split is independent, temporal or representative",
     }
 
 
@@ -78,6 +99,10 @@ def fit_arima(y, order=(1, 1, 1), forecast_steps=12):
     自动适配 ARIMA(p, d, q)
     建议先用 statsmodels.tsa.stattools.adfuller 检验平稳性
     """
+    try:
+        import statsmodels.api as sm
+    except ImportError as exc:
+        raise ImportError("ARIMA 需要额外安装 statsmodels；回归模板无需此依赖") from exc
     model = sm.tsa.ARIMA(y, order=order).fit()
     forecast = model.forecast(steps=forecast_steps)
     return {
@@ -179,7 +204,7 @@ def residual_diagnostics(y_true, y_pred):
         "RMSE": np.sqrt(mean_squared_error(y_true, y_pred)),
         "MAPE": _safe_mape(y_true, y_pred),
         "R2": r2_score(y_true, y_pred),
-        "DurbinWatson": sm.stats.durbin_watson(residuals),
+        "DurbinWatson": float(np.diff(residuals) @ np.diff(residuals) / (residuals @ residuals)) if residuals @ residuals > 0 else np.nan,
     }
 
     fig, axes = plt.subplots(1, 3, figsize=(15, 4))
@@ -200,6 +225,9 @@ def residual_diagnostics(y_true, y_pred):
 # 主流程示例 (对应论文 §5.x)
 # ============================================================
 if __name__ == "__main__":
+    np.random.seed(42)
+    Path("results").mkdir(exist_ok=True)
+    Path("figures").mkdir(exist_ok=True)
     # 模拟时序数据 (实际从附件读)
     n = 60
     t = np.arange(n)

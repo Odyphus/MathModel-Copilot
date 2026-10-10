@@ -522,6 +522,15 @@ class Runtime:
                 data["status"] = "frozen"
                 spec = domain.ModelSpec.from_dict(data)
                 errors += domain.validate_modelspec_structure(spec)
+                comparison = spec.data_contract.get("comparison")
+                if comparison is not None:
+                    from copilot_comparison import validate_declaration
+                    validate_declaration(comparison, spec.outputs)
+                    for source in comparison["source_files"]:
+                        checked = bind_file(self.root, source["path"])
+                        if checked["sha256"] != source["sha256"].upper():
+                            errors.append("比较源文件哈希不匹配")
+                        refs.append(source["path"])
                 contracts = [cp["objects"][x] for x in deps if cp["objects"][x]["kind"] == "ProblemContract"]
                 if len(contracts) != 1 or contracts[0]["payload"].get("question") != spec.question:
                     errors.append("模型须依赖同一小问的当前题意合同")
@@ -555,6 +564,9 @@ class Runtime:
                 if not data.get("question") or not any(x["payload"]["question"] == data["question"] for x in contracts):
                     errors.append("DataContract 须绑定所属小问的题意合同")
                 errors += domain.validate_data_contract(self.root, data.get("inventory", {}), data.get("passport", {}), data.get("split", {}))
+                if data.get("adapter") is not None:
+                    from copilot_data import validate_adapter
+                    errors += validate_adapter(self.root, data)
                 refs += [x["path"] for x in (data.get("inventory") or {}).get("entries", [])]
                 data = domain.seal_record(data)
             elif kind == "ValidationPlan":

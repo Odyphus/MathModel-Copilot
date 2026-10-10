@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "source": {"path": "series.csv", "encoding": "utf-8-sig"},
+  "columns": {"time": "observed_at", "available_at": "published_at", "value": "value"},
+  "unit": "1",
+  "policy": {
+    "frequency_minutes": 60,
+    "origins": ["2026-01-01T08:00:00+08:00", "2026-01-01T09:00:00+08:00", "2026-01-01T10:00:00+08:00"],
+    "horizons": [1, 2],
+    "lags": [1],
+    "train_window": 4,
+    "min_train": 3,
+    "model": "linear",
+    "scale": true,
+    "ridge_alpha": 1.0,
+    "evaluation_as_of": "2026-01-01T17:00:00+08:00",
+    "evaluation_phase": "synthetic_known_case"
+  }
+}

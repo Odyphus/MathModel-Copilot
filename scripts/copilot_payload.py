@@ -8,7 +8,7 @@ import inspect
 # This allowlist describes that public interface, never arbitrary extra fields.
 CONFIGURE_METADATA = {"title", "letter", "deadline_iso", "team_size"}
 TARGETS = ("configure", "run", "validate", "stage-record", "decide", "register",
-           "interpretation", "interpretation-review")
+           "interpretation", "interpretation-review", "claim", "section", "usage-feedback")
 
 
 def fields_for(function, supplied=(), extra=()):
@@ -48,6 +48,10 @@ def payload_help(command, kind=None):
         raise ValueError("--kind 仅用于 payload-help register / interpretation / interpretation-review")
     if command in {"interpretation", "interpretation-review"}:
         return interpretation_help(command, kind)
+    if command in {"claim", "section", "usage-feedback"}:
+        return workflow_help(command)
+    if command == "register" and kind != "ValidationPlan":
+        return registration_help(kind)
     examples = {
         "configure": {"question_count": 3, "evaluation_mode": "historical_benchmark",
                       "problem_year": 2018, "rules_year": 2026, "title": "历史题练习"},
@@ -105,11 +109,86 @@ def payload_help(command, kind=None):
         raise ValueError("无此 payload 帮助主题：" + str(command))
     if command in {"run", "validate"}:
         notes.append("示例中的文件及对象 ID 必须替换为本项目实际登记值；本命令不会自动登记依赖或补造结果。")
+    if command == "run":
+        notes.append("已有契约时先运行 run-input --question Q1；它只读列出当前有效依赖并准备输入，有多个候选时要求明确选择。")
     if command == "configure":
         notes.append("不支持把 title 等字段包进 metadata，也不支持 years/status/ready 等别名；未知字段将被明确拒绝。")
     return {"command": command, "required_fields": sorted(required), "allowed_fields": sorted(allowed),
             "fields": {name: descriptions.get(name, "参见统一执行协议") for name in sorted(allowed)},
             "example": copy.deepcopy(examples[command]), "notes": notes}
+
+
+def registration_help(kind):
+    notes = ["字段帮助不读取或修改项目状态；示例不是运行结果。",
+             "注册仍需当前 --expected-revision；文件和依赖必须真实存在且有效。"]
+    if kind is None:
+        return {"command": "register", "kinds": ["CodeManifest", "ValidationPlan"],
+                "next_commands": ["payload-help register --kind CodeManifest", "payload-help register --kind ValidationPlan"],
+                "other_contracts": "templates/copilot/；此处列出有专门字段帮助的类型，不是可注册类型全集", "notes": notes}
+    if kind != "CodeManifest":
+        raise ValueError("该类型暂无专门字段帮助；支持 --kind CodeManifest / ValidationPlan，其他源契约见 templates/copilot")
+    return {"command": "register", "kind": kind, "required_fields": [],
+            "example": {"entrypoint": "solver.py", "argv": ["{python}", "solver.py"]},
+            "fields": {"entrypoint": "--files 中实际存在的 Python 入口；唯一 Python 文件时可省略",
+                       "argv": "执行参数数组，必须以 {python}、入口文件两个元素开头；默认由入口生成"},
+            "command_arguments": {"--kind": "CodeManifest", "--key": "code.Q1", "--files": ["solver.py"],
+                                  "--depends": ["<当前同问 ModelSpec ID>"], "--payload": "<保存的 JSON 相对路径>"},
+            "generated_fields": ["question", "spec_id", "modelspec_semantic_hash", "files 的 SHA-256", "revision_id"],
+            "notes": notes + ["这些字段由实际依赖和文件计算；无需抄写哈希或手填 null。生成代码、登记代码与实际运行是三个步骤。",
+                              "需要 UTF-8 时在运行环境设置 PYTHONUTF8=1；不要把 -X 等解释器选项插在入口前。"]}
+
+
+def workflow_help(command):
+    notes = ["只读说明，不修改项目，也不证明示例已运行。示例中的 ID、数值和路径须替换为实际记录。"]
+    if command == "usage-feedback":
+        from copilot_usage_feedback import reproduction_example
+        return {"command": command, "input_mode": "draft/edit --input JSON",
+                "required_fields": ["component", "event"],
+                "allowed_fields": ["title", "description", "component", "event", "reproduction"],
+                "example": {"title": "示例：不清楚如何继续运行", "description": "以下是假想反馈，请替换为实际经历。",
+                            "component": "workflow", "event": "hard_to_understand", "reproduction": reproduction_example()},
+                "notes": notes + ["reproduction 可省略；缺失上下文会明示，不要求用户补齐才能反馈。",
+                                  "source 是信息来源自述，不是已独立复核标志；不会自动读取整个聊天记录。",
+                                  "先 export 本地文档或 preview。外发仍需现有授权流程；自由文本不会进入有限自动反馈。"]}
+    if command == "section":
+        return {"command": command, "input_mode": "cli_arguments", "required_fields": ["--key", "--path", "--claims", "--expected-revision"],
+                "example": {"--key": "paper.results", "--path": "paper/results.md", "--claims": ["<当前 Claim 对象 ID>"],
+                            "--expected-revision": "<status 中当前 revision>"},
+                "paragraph_template": "<逐字保留所引用 Claim 的完整结论> [[claim:<当前 Claim 对象 ID>]]",
+                "notes": notes + ["section 使用命令参数，不使用 --payload；--claims 需要版本化对象 ID。",
+                                  "完整结论与标记放在同一段；新数字需补相应依据，不能删掉数字或改写结论来绕过检查。",
+                                  "数据、模型等输入说明用 source-bindings，公式图表用 structure；详见 docs/SECTION_V012.md。"]}
+    return {"command": command, "required_fields": ["claim", "results"],
+            "example": {"claim": {"claim_id": "length.result", "claim": "计算长度为 10 m。", "claim_type": "numerical",
+                                  "paper_anchor": "results", "formal_run_id": "<真实 Run 对象 ID>",
+                                  "requirement_ids": ["REQ-Q1-001"], "data_sources": ["<该 Run 的 data_hash>"],
+                                  "code_locations": ["solver.py"], "tables": ["<该 Run.outputs 中真实文件路径>"],
+                                  "validation_evidence": ["Q1.run.formal"], "limitations": ["仅限本次假想长度算例"]},
+                        "results": ["<当前已核验的 Result 对象 ID>"]},
+            "fields": {"claim": "EvidenceMapEntry 内容；把结论文字、来源、正式运行和限制一同登记",
+                       "results": "绑定当前已核验结果；不能使用代码登记 ID 或尚未核验的 Run ID"},
+            "notes": notes + ["数值必须与已核验 Result.metrics 绑定；需要舍入时使用已有 display_contracts，不改写原值。",
+                              "Q1.run.formal 是对应小问的正式运行验证引用，必须绑定实际已核验的 Run/Result；不是任意 check_id 或说明文字。其他验证文件须符合证据协议。",
+                              "数值结论至少绑定一个真实表格或图件；文件须是所绑定正式运行的输出，不能事后制造表格冒充原输出。",
+                              "若所需表格尚未输出，应修改模型输出声明与求解器，重跑并核验，再登记新 Claim。",
+                              "当前解析器禁止数字间逗号；列表使用顿号、分号或表格，十进制数字不使用千位分隔符。"]}
+
+
+def recovery_hint(command, message):
+    """Add narrow, actionable guidance without changing rejection or authority."""
+    if command in {"register", "run"} and ("argv" in message or "入口" in message):
+        return {"action": "核对入口与已登记执行参数；保持 {python}、入口文件的顺序。",
+                "help": "payload-help register --kind CodeManifest"}
+    if command == "claim":
+        if "千位分隔符" in message:
+            return {"action": "保留数值，去除数值内部千位分隔符；多个独立数值改用顿号、分号或表格分隔。", "help": "payload-help claim"}
+        if "table" in message or "表格" in message or "图件" in message:
+            return {"action": "绑定实际正式运行输出；若缺表格/图件，补充输出声明和求解器后重跑、核验，再登记结论。", "help": "payload-help claim"}
+    if command == "section" and ("marker" in message or "referenced claim text" in message):
+        return {"action": "在同一段保留被引用 Claim 的完整文字和版本标记；新数字先补证据。", "help": "payload-help section"}
+    if "revision" in message.lower() or "版本冲突" in message:
+        return {"action": "读取 status，确认期间发生的变更，再按新版本重新准备输入；不要直接改版本号重试旧内容。", "help": "run-input --help"}
+    return None
 
 
 def interpretation_help(command, kind):

@@ -105,6 +105,79 @@ class UsageFeedbackTests(unittest.TestCase):
         self.assertFalse(self.profile.exists())
         self.assertEqual([], list(self.project.iterdir()))
 
+    def test_optional_reproduction_exports_full_redacted_context_without_github(self):
+        context = feedback.reproduction_example()
+        private = 'a@example.org ghp_syntheticsecret123 https://example.org/private password=syntheticvalue'
+        for key in feedback.REPRO_FIELDS:
+            context[key] = {'text': '发生的情况 ' + private, 'source': 'user_report'}
+        context['steps'] = [{'text': private, 'source': 'agent_summary'}]
+        context['missing_context'] = [private]
+        record = self.draft(reproduction=context)
+        with patch.object(self.transport, 'inspect', side_effect=AssertionError('local preview must not contact GitHub')):
+            local = self.service.preview(record['id'])
+            self.service.export(record['id'], self.project/'local-feedback.md')
+        body = local['local_preview']['body']
+        saved = (self.project/'local-feedback.md').read_text(encoding='utf-8')
+        for text in [body, saved]:
+            self.assertIn('问题经过与复现线索', text)
+            self.assertIn('不是用户逐字原话', text)
+            for secret in ['a@example.org','ghp_synthetic','https://example.org','syntheticvalue']:
+                self.assertNotIn(secret, text)
+        self.assertFalse((self.project/'state').exists())
+        self.assertIsNone(local['preview'])
+        self.assertEqual(self.transport.creates, 0)
+
+    def test_reproduction_gaps_do_not_become_claims_of_complete_context(self):
+        record = self.draft(reproduction={'goal':{'text':'了解使用方式', 'source':'user_report'}})
+        local = self.service.preview(record['id'])['local_preview']['body']
+        self.assertIn('未填写的内容：操作步骤', local)
+        self.assertIn('目前是否解决', local)
+        self.assertIn('没有读取完整会话', local)
+        self.assertNotIn('用户审阅后的', local)
+
+    def test_invalid_reproduction_rejected_without_private_writes(self):
+        invalid = [{'logs':'everything'}, {'goal':'text'}, {'goal':{'text':'x','source':'verified'}},
+                   {'goal':{'text':'x','source':'agent_summary','approved':True}},
+                   {'steps':[{'text':'x','source':'agent_summary'}]*9},
+                   {'actual':{'text':'x'*1501,'source':'user_report'}},
+                   {'missing_context':['gap']*6}, {'missing_context':'gap'},
+                   {'steps':[{'text':'x'*1500,'source':'user_report'}]*6}]
+        for context in invalid:
+            with self.subTest(context=str(context)[:100]), self.assertRaises(ValueError):
+                self.draft(reproduction=context)
+        self.assertFalse(self.profile.exists())
+
+    def test_reproduction_edit_invalidates_approval_and_request_dedup_checks_context(self):
+        self.configure()
+        record = self.draft(reproduction=feedback.reproduction_example())
+        approved = self.approve(record)
+        updated = copy.deepcopy(approved['draft'])
+        updated['reproduction']['outcome'] = {'text':'还没有解决','source':'user_report'}
+        changed = self.service.edit(record['id'], updated, approved['record_revision'])
+        self.assertIsNone(changed['approval'])
+        self.assertIsNone(changed['preview'])
+        with self.assertRaises(ValueError): self.service.send(record['id'])
+        first = self.service.draft(updated, request_id='reproduction-once')
+        self.assertEqual(first['id'], self.service.draft(updated, request_id='reproduction-once')['id'])
+        updated['reproduction']['outcome']['text'] = '后来已解决'
+        with self.assertRaises(ValueError): self.service.draft(updated, request_id='reproduction-once')
+        self.assertEqual(self.transport.creates, 0)
+
+    def test_limited_auto_never_includes_reproduction_free_text(self):
+        self.configure('limited_auto', ['no_experience'], 1)
+        record = self.draft(reproduction={'actual':{'text':'PRIVATE-CONTEXT-SENTINEL','source':'user_report'}})
+        preview = self.service.preview(record['id'])
+        self.assertNotIn('PRIVATE-CONTEXT-SENTINEL', json.dumps(preview['preview']))
+        self.assertNotIn('reproduction', json.dumps(preview['preview']))
+        # Injected fake transport only; assert actual payload at this boundary.
+        sent = self.service.send(record['id'])
+        self.assertEqual(sent['status'], 'sent')
+        self.assertNotIn('PRIVATE-CONTEXT-SENTINEL', self.transport.issues[0]['body'])
+
+    def test_old_draft_shape_is_unchanged(self):
+        record = self.draft()
+        self.assertEqual(set(record['draft']), {'title','description','component','event'})
+
     def test_no_modeling_project_is_needed_and_no_store_is_created(self):
         record = self.draft()
         self.assertEqual("draft", record["status"])
@@ -341,6 +414,37 @@ class UsageFeedbackTests(unittest.TestCase):
         self.assertFalse((self.project / "state").exists())
         with patch("sys.stderr", io.StringIO()), self.assertRaises(SystemExit):
             feedback.parser().parse_args(["send", "--id", "any", "--fake-success"])
+
+    def test_public_help_example_drafts_previews_and_exports_with_documented_flag(self):
+        public = [sys.executable, "-B", str(ROOT / "scripts/copilot.py"), "--workspace", str(self.project)]
+        def call(*args):
+            result = subprocess.run([*public, *args], capture_output=True, text=True,
+                                    encoding="utf-8", timeout=20)
+            self.assertEqual(0, result.returncode, result.stderr)
+            return json.loads(result.stdout)["result"]
+        help_data = call("payload-help", "usage-feedback")
+        self.assertEqual("draft/edit", help_data["input_mode"].split()[0])
+        flag = help_data["input_mode"].split()[1]
+        (self.project / "example.json").write_text(json.dumps(help_data["example"]), encoding="utf-8")
+        args = ["usage-feedback", "--user-data", str(self.profile)]
+        record = call(*args, "draft", flag, "example.json")
+        self.assertEqual("draft", record["status"])
+        example = help_data["example"]
+        example["description"] = "已补充说明；此条仍是合成示例。"
+        (self.project / "example.json").write_text(json.dumps(example), encoding="utf-8")
+        record = call(*args, "edit", flag, "example.json", "--id", record["id"],
+                      "--record-revision", str(record["record_revision"]))
+        self.assertEqual(example["description"], record["draft"]["description"])
+        preview = call(*args, "preview", "--id", record["id"])
+        call(*args, "export", "--id", record["id"], "--output", "example.md")
+        body = (self.project / "example.md").read_text(encoding="utf-8")
+        # Markdown export intentionally omits the hidden Issue dedup marker.
+        self.assertIn(preview["local_preview"]["body"].split("<!-- mathmodel-copilot-feedback:")[0].rstrip(), body)
+        self.assertIn("复现", body)
+        self.assertIsNone(self.service.show(record["id"])["receipt"])
+        self.assertEqual("off", self.service.settings()["mode"])
+        self.assertIsInstance(call("experience", "--user-data", str(self.profile), "settings"), dict)
+        self.assertFalse((self.project / "state").exists())
 
     def test_request_id_retry_reuses_the_same_draft_and_rejects_changed_content(self):
         payload = {"title": "标题", "description": "说明", "component": "dashboard", "event": "suggestion"}

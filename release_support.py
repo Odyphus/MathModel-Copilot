@@ -17,10 +17,10 @@ ROOT_FILES = {
 }
 TREES = {".codex-plugin", ".github", "agents", "assets", "competitions", "config", "dashboard",
          "docs", "references", "scripts", "skills", "templates", "tests", "src", "tools", "compat"}
-EXAMPLES = {"cumcm2018b", "mcm2009a", "v020_paper"}
+EXAMPLES = {"cumcm2018b", "mcm2009a", "v020_paper", "data_baselines", "forecast_paper"}
 EXTRA_FILES = {".impeccable/design.json"}
 EXCLUDED_FILES = {"assets/status-demo.svg"}
-SUFFIXES = {".py", ".md", ".txt", ".json", ".yaml", ".yml", ".toml", ".svg", ".html", ".css", ".js", ".tex", ".bib", ".cls", ".sty", ".csv"}
+SUFFIXES = {".py", ".ps1", ".md", ".txt", ".json", ".yaml", ".yml", ".toml", ".svg", ".html", ".css", ".js", ".tex", ".bib", ".cls", ".sty", ".csv"}
 BLOCKED_PARTS = {"__pycache__", ".git", ".venv", "venv", "node_modules", "build", "dist",
                  ".pytest_cache", ".mypy_cache", "outputs", "cases", "verification", "work",
                  "screenshots", "mobbin", "data", ".copilot", "state", "paper_output", "paper_workspace"}

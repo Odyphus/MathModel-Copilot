@@ -1,11 +1,11 @@
 ---
 name: mathmodel-copilot
-description: MathModel Copilot v0.3.0-preview.2, an evidence-based mathematical-modeling competition workflow built on mathmodel-skill. Use for CUMCM, MCM/ICM, Diangong or custom modeling contests, including requirements, per-question modeling, actual Python runs, independent validation, paper assembly, team handoff and submission audit. Preserves ten stages and Critic/Red Team. Do not trigger for unrelated data analysis or ordinary paper review. Maintenance requests modify the skill rather than start a contest.
+description: MathModel Copilot, an evidence-based mathematical-modeling competition workflow built on mathmodel-skill. Use for CUMCM, MCM/ICM, Diangong or custom modeling contests, including requirements, per-question modeling, actual Python runs, independent validation, paper assembly, team handoff and submission audit. Preserves ten stages and Critic/Red Team. Do not trigger for unrelated data analysis or ordinary paper review. Maintenance requests modify the skill rather than start a contest.
 ---
 
 # MathModel Copilot (v0.3) · Preview
 
-当前公测候选为 v0.3.0-preview.2，Python 分发版本为 0.3.0rc2（同一候选的 PEP 440 表示），兼容既有权威状态 schema。主名 mathmodel-copilot，旧 mathmodel-skill 只作显式可选兼容入口。含数字的章节按 [来源与结构协议](docs/SECTION_V012.md) 登记，舍入展示使用 [明确精度合同](docs/DISPLAY_V012.md)，最终装配按 [论文来源回读协议](docs/PAPER_CHAIN_V012.md) 核验；DOCX 符号、字段及未知内容按 [行内支持边界](docs/DOCX_INLINE_V013.md) 明确处理或拒绝。
+本次安装的版本、Python 分发版本和发布状态以 [RELEASE_METADATA.json](RELEASE_METADATA.json) 为准；不要从旧介绍或下载文件名推断当前版本。兼容既有权威状态 schema 4.0，新增表格解释使用独立 schema 1.0。主名 mathmodel-copilot，旧 mathmodel-skill 只作显式可选兼容入口。含数字的章节按 [来源与结构协议](docs/SECTION_V012.md) 登记，舍入展示使用 [明确精度合同](docs/DISPLAY_V012.md)，最终装配按 [论文来源回读协议](docs/PAPER_CHAIN_V012.md) 核验；DOCX 符号、字段及未知内容按 [行内支持边界](docs/DOCX_INLINE_V013.md) 明确处理或拒绝。
 
 基于 mathmodel-skill v6.2.0，保留 Stage 0–9、按子问循环、Competition Pack、Critic/Red Team、初始化、状态查看和论文装配。用版本化需求、任务与实际证据驱动完成状态；Stage 只导航，评分只建议。
 
@@ -74,7 +74,7 @@ description: MathModel Copilot v0.3.0-preview.2, an evidence-based mathematical-
 ## 需求到证据
 
 1. 从完整真实题面确认 question_count；不要把工况当作小问，不猜未公布题目的全集。每问拆成稳定 ReqID 与逐项输出。发现影响模型或结果的题意歧义、团队假设时，先按统一执行协议用 `interpretation` 登记并关联拟用 ReqID，再处理 ProblemContract；不能先冻结合同，再只把已知歧义留在聊天或阶段 notes。登记后可继续给出候选比较，尚未作出选择不妨碍审题，但中高影响歧义未妥善处理时不得冻结或执行该问。
-2. ModelSpec 绑定当前题意合同、ReqID、公式、参数定义、候选取舍、必需输出和验证计划；ParameterSet 改取值，模型改动须新版本。Data Contract 复用 inventory/passport/split 与不适用理由。
+2. ModelSpec 绑定当前题意合同、ReqID、公式、参数定义、候选取舍、必需输出和验证计划；ParameterSet 改取值，模型改动须新版本。Data Contract 复用 inventory/passport/split 与不适用理由。读 CSV/XLSX 时按需加载 [数据入口](references/data_adapter.md)，明确单位与时点/区间后用 `data inspect/prepare`；生成文件不自动登记或验证模型。优化/回归选型后分别加载 [优化方法卡](references/methods/linear_optimization.md) 或 [回归方法卡](references/methods/regression.md)，避免为了查一种方法加载整个目录。
 3. Task 指明 requirements、dependencies、depends_on、role、title；Stage 不代替 Task 完成判据。
 4. CodeManifest 锁定文件、entrypoint 和 argv。ValidationPlan 运行前锁定 checker、实际哈希与判据，不得删掉模型预定检查。
 5. `run` 在新目录真正执行，绑定 seed、参数、代码、数据、环境、日志、退出码和输出。v0.1 已验证的执行后端是 Python；生成代码、外部运行声明不等于已执行。
@@ -106,13 +106,14 @@ pack 位于 competitions/<id>/pack.json，CUMCM/MCM/电工杯保留原模板与�
 
 problem_year、rules_year、evaluation_mode 分开。正式比赛年份一致；旧题用 historical_benchmark。打开官方页面核对当届规则，保存项目内真实来源快照，再建立规则锁；仓库 pack 存在不表示该项目已核验规则。
 
-论文装配沿用 render_paper.py，AI 台账沿用 render_ai_usage.py；CUMCM 2026 使用/未使用声明均在参考文献之前，有使用时补充支撑材料 AI工具使用详情.pdf。模板 marker 与论文数字须复核。
+论文装配沿用 render_paper.py；需要原生 Word 时按需读 [章节导出](references/paper_export.md)。AI 台账沿用 render_ai_usage.py；CUMCM 2026 使用/未使用声明均在参考文献之前，有使用时补充支撑材料 AI工具使用详情.pdf。模板 marker 与论文数字须复核。
 
 按 [交付协议](docs/DELIVERY.md) 审计具体文件、页数、匿名、AI 披露、引用、支撑材料、证据和视觉复核。generated、checked、frozen、awaiting_submission、submitted、receipt_received 分开。历史演示不能标正式 Ready，工具不执行对外上传，也不替人签字或虚构回执。
 
 ## 路径与参考
 
 - API / CLI：[统一执行协议](references/copilot_runtime.md)
+- 常用操作遇到字段、重算或论文衔接问题时，按需读[常用流程](references/common_tasks.md)；已有契约可先用只读 `run-input` 准备真实当前依赖。
 - 状态与决策：[实施记录](docs/IMPLEMENTATION.md)
 - 迁移及来源：[MIGRATION](docs/MIGRATION.md)
 - 宿主与赛事：[ADAPTERS](docs/ADAPTERS.md)

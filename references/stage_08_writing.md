@@ -29,6 +29,8 @@ next: stage_09_review
 
 先读 [写作辅助与图表协议](paper_assistance.md)：其中包括材料卡、图表取舍、摘要案例的可追溯接入，以及 `copilot_paper_review.py` 的只读机械检查。数字齐全、材料检查通过、AI 评分高和文件编译成功都不代表作者确认或论文完成。
 
+需要原生 Word 时，按需读 [已核验章节导出](paper_export.md)，使用现有章节与来源合同装配并读回；可选 PDF 必须由本机后端实际转换、打开检查。此路径不改作者原稿，不替代赛事模板、引文核验或交付审计。
+
 Do not invent new results while writing. If the paper exposes a modeling contradiction, record it and trigger a targeted L2 backtrack.
 
 ## 1. Lock the current rules first

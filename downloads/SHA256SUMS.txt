@@ -1,4 +1,5 @@
-4ae81e8e98d22509dd5c96aea029fbacdc927b8ec38edd0b4e9ca0f2332bde47  MathModel-Copilot-latest.zip
-4ae81e8e98d22509dd5c96aea029fbacdc927b8ec38edd0b4e9ca0f2332bde47  MathModel-Copilot-v0.3-Preview.zip
-4ae81e8e98d22509dd5c96aea029fbacdc927b8ec38edd0b4e9ca0f2332bde47  MathModel-Copilot-v0.3.0-preview.2.zip
 6300fabd2b9c765e578fa554cfc856cd705ff6d44732026f9ebd47f6ca877dc2  archive/MathModel-Copilot-v0.3.0-preview.1.zip
+6e63282b11a6d9029d20cd4920ae164a0edf1313c2a7a12550f251cb71d080ce  MathModel-Copilot-latest.zip
+6e63282b11a6d9029d20cd4920ae164a0edf1313c2a7a12550f251cb71d080ce  MathModel-Copilot-v0.3-Preview.zip
+4ae81e8e98d22509dd5c96aea029fbacdc927b8ec38edd0b4e9ca0f2332bde47  MathModel-Copilot-v0.3.0-preview.2.zip
+6e63282b11a6d9029d20cd4920ae164a0edf1313c2a7a12550f251cb71d080ce  MathModel-Copilot-v0.3.0-preview.3.dev4.zip

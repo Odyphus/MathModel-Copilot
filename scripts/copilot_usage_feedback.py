@@ -91,6 +91,73 @@ def program_facts():
             "platform": system if system in {"Windows", "Linux", "Darwin"} else "other", "format_version": 1}
 
 
+REPRO_FIELDS = {"goal": "原本想做什么", "expected": "预期发生什么", "actual": "实际发生什么",
+                "recovery": "尝试过的处理", "outcome": "目前是否解决"}
+REPRO_SOURCES = {"user_report": "用户报告（未独立复核）", "agent_summary": "AI 整理（不是用户逐字原话）"}
+
+
+def reproduction_example():
+    return {"goal": {"text": "重新运行修改参数后的模型。", "source": "user_report"},
+            "steps": [{"text": "修改参数后尝试准备运行输入。", "source": "agent_summary"}],
+            "expected": {"text": "知道需要使用哪些当前版本。", "source": "user_report"},
+            "actual": {"text": "不清楚代码和验证计划是否仍可使用。", "source": "user_report"},
+            "missing_context": ["示例未提供实际报错和执行记录；不能据此复现。"]}
+
+
+def validate_reproduction(value):
+    """Optional, bounded context; provenance is declared, not authenticated."""
+    allowed = set(REPRO_FIELDS) | {"steps", "missing_context"}
+    if not isinstance(value, dict) or set(value) - allowed:
+        raise ValueError("reproduction 仅接受 goal/steps/expected/actual/recovery/outcome/missing_context")
+
+    def item(entry):
+        if (not isinstance(entry, dict) or set(entry) != {"text", "source"}
+                or not isinstance(entry["source"], str) or entry["source"] not in REPRO_SOURCES):
+            raise ValueError("复现片段必须包含 text 和 source；source 为 user_report / agent_summary")
+        return {"text": _text(entry["text"], "复现片段", 1500), "source": entry["source"]}
+
+    result = {key: item(value[key]) for key in REPRO_FIELDS if key in value}
+    if "steps" in value:
+        if not isinstance(value["steps"], list) or len(value["steps"]) > 8:
+            raise ValueError("复现步骤必须是至多 8 项的数组")
+        result["steps"] = [item(entry) for entry in value["steps"]]
+    if "missing_context" in value:
+        if not isinstance(value["missing_context"], list) or len(value["missing_context"]) > 5:
+            raise ValueError("上下文缺口必须是至多 5 项的数组")
+        result["missing_context"] = [_text(entry, "上下文缺口", 500) for entry in value["missing_context"]]
+    texts = [entry["text"] for key, entry in result.items() if key in REPRO_FIELDS]
+    texts += [entry["text"] for entry in result.get("steps", [])] + result.get("missing_context", [])
+    if sum(map(len, texts)) > 8000:
+        raise ValueError("复现上下文文本总量不得超过 8000 字符；保留与问题有关的最小片段")
+    return result
+
+
+def reproduction_lines(value):
+    context = validate_reproduction(value)
+    lines = ["", "## 问题经过与复现线索", "以下为填报者整理的部分上下文，来源标签不代表独立复核；字段齐全也不等于已成功复现。"]
+    missing = []
+    for key, label in REPRO_FIELDS.items():
+        if key == "expected":
+            lines += ["", "### 操作步骤"]
+            steps = context.get("steps", [])
+            for number, step in enumerate(steps, 1):
+                lines += [f"{number}. [{REPRO_SOURCES[step['source']]}] {redact(step['text'])}"]
+            if not steps:
+                missing.append("操作步骤")
+                lines.append("未提供。")
+        entry = context.get(key)
+        lines += ["", "### " + label]
+        if entry:
+            lines += [REPRO_SOURCES[entry["source"]], redact(entry["text"])]
+        else:
+            missing.append(label)
+            lines.append("未提供。")
+    lines += ["", "### 上下文缺口", "未填写的内容：" + ("、".join(missing) if missing else "上述字段均已填写，真实性和复现仍需排查。")]
+    lines += ["- " + redact(gap) for gap in context.get("missing_context", [])]
+    lines.append("仅使用明确提供或选定的片段；没有读取完整会话。")
+    return lines
+
+
 class TransportError(ValueError):
     def __init__(self, code, message):
         self.code = code
@@ -253,14 +320,17 @@ class UsageFeedback:
 
     @staticmethod
     def _draft_payload(payload):
-        if not isinstance(payload, dict) or set(payload) - {"title", "description", "component", "event"}:
-            raise ValueError("草稿仅接受 title/description/component/event；不接收原始日志、文件或状态报告")
+        if not isinstance(payload, dict) or set(payload) - {"title", "description", "component", "event", "reproduction"}:
+            raise ValueError("草稿仅接受 title/description/component/event/reproduction；不接收整份日志、文件或状态报告")
         if (not isinstance(payload.get("component"), str) or payload["component"] not in COMPONENTS
                 or not isinstance(payload.get("event"), str) or payload["event"] not in EVENTS):
             raise ValueError("请选择已列出的反馈组件与事件类型")
-        return {"title": _text(payload.get("title", ""), "标题", 200, empty=True),
+        draft = {"title": _text(payload.get("title", ""), "标题", 200, empty=True),
                 "description": _text(payload.get("description", ""), "说明", 12000, empty=True),
                 "component": payload["component"], "event": payload["event"]}
+        if "reproduction" in payload:
+            draft["reproduction"] = validate_reproduction(payload["reproduction"])
+        return draft
 
     def _experience(self, identity):
         record = self.storage.read("experiences", identity)
@@ -400,7 +470,9 @@ class UsageFeedback:
                  f"Python：{facts['python_version']}", f"操作系统类别：{facts['platform']}"]
         if mode == "review":
             title = redact(draft["title"]) or title
-            lines += ["", "## 用户审阅后的反馈说明", redact(draft["description"]) or "未补充说明。"]
+            lines += ["", "## 反馈说明（需审阅）", redact(draft["description"]) or "未补充说明。"]
+            if "reproduction" in draft:
+                lines += reproduction_lines(draft["reproduction"])
             lines += self._selected_evidence(record)
         marker = "<!-- mathmodel-copilot-feedback:" + record["id"] + " -->"
         lines += ["", "本通道不自动读取题目、论文或运行结果；正文需检查，不构成建模结论核验。", "", marker]
@@ -417,6 +489,7 @@ class UsageFeedback:
             repository = repository or settings["repository"]
             record.update(approval=None, status="draft")
             local = {"title": redact(record["draft"]["title"]), "description": redact(record["draft"]["description"])}
+            local["body"] = self._build(record, {}, "review")["payload"]["body"]
             record["local_preview"] = local
             if not repository:
                 record["preview"] = None

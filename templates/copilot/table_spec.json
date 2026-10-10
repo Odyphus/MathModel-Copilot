@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "question": "Q1",
+  "observation_unit": "one declared 10-minute interval",
+  "source": {"path": "data/attachment.xlsx", "sheet": "每日数据", "header_row": 1},
+  "columns": [
+    {"name": "date", "source": "日期", "type": "date", "fill": "merged"},
+    {"name": "time", "source": "时间", "type": "time"},
+    {"name": "energy", "source": "功率", "type": "number", "unit": "kW", "output_unit": "kWh", "power_basis": "interval_mean", "min": 0, "meaning": "interval energy from average power"}
+  ],
+  "time_axis": {"date_column": "date", "time_column": "time", "label": "end", "interval_minutes": 10, "start": "2026-01-01T00:00:00", "periods": 144}
+}

@@ -122,11 +122,34 @@ class PackageIntegrityTests(unittest.TestCase):
             (ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
         )
         version = plugin["version"]
+        release = json.loads((ROOT / "RELEASE_METADATA.json").read_text(encoding="utf-8"))
+        self.assertEqual(version, release["version"])
         major_minor = ".".join(version.split(".")[:2])
         self.assertIn(f"(v{major_minor})", (ROOT / "SKILL.md").read_text(encoding="utf-8"))
-        self.assertIn(
-            f"**{version}**", (ROOT / "README.md").read_text(encoding="utf-8")
-        )
+        # An unpublished maintenance candidate preserves the public README.
+        # It must identify that published baseline explicitly, rather than
+        # presenting a development build as the downloadable public release.
+        readme_version = version
+        if release.get("status") == "local_development_candidate":
+            self.assertFalse(release["published"])
+            self.assertTrue(release["development_base_published"])
+            self.assertEqual("local_review_only", release["distribution_scope"])
+            readme_version = release["development_baseline"]
+            self.assertNotEqual(version, readme_version)
+        if release.get("status") == "public_github_preview":
+            # Editorial README copy can stay frozen while the stable download
+            # advances. Check the actual public download contract instead.
+            index = json.loads((ROOT / "downloads/release-index.json").read_text(encoding="utf-8"))
+            self.assertEqual(version, index["current_version"])
+            current = ROOT / "downloads" / index["versioned_download"]
+            latest = ROOT / "downloads" / index["stable_download"]
+            self.assertTrue(current.is_file())
+            self.assertEqual(current.read_bytes(), latest.read_bytes())
+            self.assertIn(index["stable_download"], (ROOT / "README.md").read_text(encoding="utf-8"))
+        else:
+            self.assertIn(
+                f"**{readme_version}**", (ROOT / "README.md").read_text(encoding="utf-8")
+            )
         self.assertIn(
             f"v{major_minor}", (ROOT / "assets" / "banner.svg").read_text(encoding="utf-8")
         )

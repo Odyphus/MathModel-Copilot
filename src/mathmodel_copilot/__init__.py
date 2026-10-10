@@ -1,8 +1,8 @@
 """Installed launcher for the preserved MathModel Copilot resource tree."""
 from pathlib import Path
 
-__version__ = "0.3.0rc2"
-DISPLAY_VERSION = "0.3.0-preview.2"
+__version__ = "0.3.0rc3.dev4"
+DISPLAY_VERSION = "0.3.0-preview.3.dev4"
 
 
 def resource_root() -> Path:

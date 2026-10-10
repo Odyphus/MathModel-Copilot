@@ -1,6 +1,6 @@
 # 使用反馈：有上下文、可审阅、可核对送达
 
-此功能向产品维护者反映使用体验，与向 AI 讨论赛题的“建模意见”不同。用户可直接让 AI 整理，不需要手填下面的结构化输入。本产品仓库为 `Odyphus/MathModel-Copilot`，当前私有，仅有访问权限的账号可以查看或创建 Issue；产品设置仍由用户明确配置，不因仓库创建自动授予分享许可。接收仓库由维护者明确配置；不能自动将上游 mathmodel-skill 仓库当作接收位置。0.3 候选不宣称已经完成真实 GitHub 送达验收，实际证据见交付报告。
+此功能向产品维护者反映使用体验，与向 AI 讨论赛题的“建模意见”不同。用户可直接让 AI 整理，不需要手填下面的结构化输入。本产品仓库为 `Odyphus/MathModel-Copilot`；仓库可见性、账号和访问权限由发送前的实际预检确认，不沿用旧文档中的状态。产品设置仍由用户明确配置，不因仓库创建自动授予分享许可。接收仓库由维护者明确配置；不能自动将上游 mathmodel-skill 仓库当作接收位置。0.3 候选不宣称已经完成真实 GitHub 送达验收，实际证据见交付报告。
 
 ## 本地材料到反馈草稿
 
@@ -61,6 +61,16 @@ preview 读取真实仓库和当前 GitHub 登录，不创建 Issue。向用户�
 configure 的 action 为 `configure_usage_feedback`，scope 精确为 `{binding,mode,repository,target,allowed_events,max_submissions}`；review 的 target=null、allowed_events=[]、max_submissions=0。limited_auto 的 target 是实际 `GitHubTransport.inspect(repository)` 返回的仓库/账号/可见性，不得手填未经读取的值；事件列表排序，来自命令 help 的 `recap_*` 等枚举，样例必须由真实程序映射生成。revoke 的 action 为 `revoke_usage_feedback`，scope 仅 `{binding}`，另传刚读的 settings_revision。
 
 如果只想暂停：让 AI 读取设置并按本人指令 `revoke --settings-revision N --authorization <文件>`。这不会删历史反馈或复盘。
+
+## 可选的问题经过
+
+`draft/edit` 的 payload 可增加 `reproduction`，用于保留排查所需的最小上下文；原有简短反馈仍然有效。`payload-help usage-feedback` 提供可修改的假想示例。
+
+- `goal/expected/actual/recovery/outcome` 分别表示目标、预期、实际、已尝试处理和当前结果；每项为 `{text, source}`，source 仅为 `user_report` 或 `agent_summary`。
+- `steps` 是至多 8 条同样结构的操作步骤；`missing_context` 是至多 5 条尚缺信息。缺失字段在预览中明示，不阻止保存反馈。
+- 每段最多 1500 字符，缺口说明每条最多 500 字符，上下文文本合计最多 8000 字符。程序拒绝未知字段与假造的 verified 来源标签。
+- 以上来源均为填报说明，不能认证用户身份或证明问题已复现；已有真实过程片段仍须通过 event_ids 明确选取，不自动抓取整段聊天。
+- 完整本地预览和导出会对所有新增文本应用已有脱敏；未配置 GitHub 也能阅读正文。修改上下文会撤销旧批准。有限自动反馈仍排除这些自由文本。
 
 ## 保护能力与成本边界
 

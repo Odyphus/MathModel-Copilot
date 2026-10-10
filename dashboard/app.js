@@ -83,6 +83,7 @@
     if(object.kind==='AmbiguityEntry')return `${q?q+' · ':''}题意解释`;
     if(object.kind==='AssumptionEntry')return `${q?q+' · ':''}建模假设`;
     const title=p.definition?.requested_action||p.claim||p.title||object.title;
+    if(object.kind==='EvidenceMapEntry'&&typeof title==='string'&&(title.length>120||/[\r\n]/.test(title)))return `${q?q+' · ':''}论文结论（展开查看完整内容）`;
     if(title&&hasChinese(title))return plainText(title);
     if(/^Execute and independently validate Q\d+$/.test(String(title)))return plainText(title);
     if(title==='Retained causal discrete-event heuristic')return `${q?q+' · ':''}因果离散事件调度模型`;
@@ -190,7 +191,26 @@
   function validationRows(payload) {
     return (Array.isArray(payload.checks)?payload.checks:[]).map((check,index)=>({name:outputNames[check.check_id]||`第${index+1}项检查`,status:check.status,criterion:typeof check.criterion==='string'?check.criterion:'',predeclared:check.predeclared===true,actual:check.actual,evidence:Array.isArray(check.evidence)?check.evidence:[]}));
   }
-  const exportsForTests = {metricRows,validationRows,interactionContext,parameterRows,changeDescription,requirementContext,outputLabel,statusLabel,plainText,questionLabel,questionOf,displayTitle,projectName,stateOf,isUsable,modeLabel,questionGroups,questionProgress,pendingConfirmations,currentProblems,nextAction};
+  function recheckGuide(object,v) {
+    if(object.is_current===false||(!errorsOf(object).length&&stateOf(object)!=='stale'))return null;
+    const records=v.objects||{},seen=new Set(),pending=[object],causes=[],unique=new Set();
+    const add=cause=>{const key=JSON.stringify(cause);if(!unique.has(key)){unique.add(key);causes.push(cause);}};
+    while(pending.length){const item=pending.pop(),id=idOf(item);if(seen.has(id))continue;seen.add(id);
+      if(item.is_current===false){const latest=Object.values(records).find(o=>o.key===item.key&&o.is_current===true);if(latest)add({type:'version',id,latest:idOf(latest),message:`${kinds[item.kind]||'依据'}已有新版本，本条记录仍引用旧版本。`});}
+      for(const file of item.files||[]){const observed=v.observed_files?.[file.path];if(observed?.unavailable)add({type:'file',id,message:`${kinds[item.kind]||'依据'}的关联文件当前无法读取。`});else if(observed?.sha256&&file.sha256&&observed.sha256.toLowerCase()!==file.sha256.toLowerCase())add({type:'file',id,message:`${kinds[item.kind]||'依据'}的关联文件与登记时不同。`});}
+      for(const dep of item.dependencies||[])if(records[dep])pending.push(records[dep]);
+    }
+    const downstream=[],reached=new Set([idOf(object)]),queue=[idOf(object)],consumers=new Map();
+    for(const item of Object.values(records))for(const dep of item.dependencies||[]){if(!consumers.has(dep))consumers.set(dep,[]);consumers.get(dep).push(item);}
+    while(queue.length)for(const item of consumers.get(queue.shift())||[]){const id=idOf(item);if(reached.has(id))continue;reached.add(id);queue.push(id);if(item.is_current!==false)downstream.push(id);}
+    return {causes,downstream,next:'先处理发生变化的依据，再重新运行受影响的计算和检查；论文结论与章节也需使用新的结果重新登记。'};
+  }
+  function metricHelpRequest(object) {
+    const missing=(object.metric_details?.items||[]).filter(m=>m.declaration_status==='conflicting'||!m.label||!m.unit||!m.scope);
+    if(!missing.length)return null;
+    return `请检查这份结果的指标说明，先向我解释缺少哪些信息，按实际依据补充含义、单位和适用范围；不要从字段名猜测。\n结果记录：${idOf(object)}\n需核对的指标（最多列出 20 项）：\n${JSON.stringify(missing.slice(0,20).map(m=>({metric_path:m.metric_path,meaning:m.label,unit:m.unit,scope:m.scope,declaration_status:m.declaration_status,model_ids:m.metadata_source_ids})),null,2)}\n明确后更新相关 ModelSpec.outputs 的 meaning/unit/scope，使用 metric_path 对应指标。更新会影响后续记录，请先检查影响，再重跑、核验并更新受影响的论文；不要直接修改旧结果或工作台状态。`;
+  }
+  const exportsForTests = {recheckGuide,metricHelpRequest,metricRows,validationRows,interactionContext,parameterRows,changeDescription,requirementContext,outputLabel,statusLabel,plainText,questionLabel,questionOf,displayTitle,projectName,stateOf,isUsable,modeLabel,questionGroups,questionProgress,pendingConfirmations,currentProblems,nextAction};
   if (typeof module !== 'undefined' && module.exports) { module.exports = exportsForTests; return; }
 
   const $ = id => document.getElementById(id);
@@ -372,6 +392,7 @@
   }
   function showResults() {
     const f=put(el('div'),heading('成果与依据','查看结论、结果与图表；需要时再展开计算过程和模型资料。'));
+    const comparisons=showComparisons();if(comparisons)f.append(comparisons);
     const controls=el('div','toolbar'),result=el('div'),input=el('input'),count=el('span','results-count');input.type='search';input.placeholder='搜索小问、内容或状态';input.value=filters.query;input.setAttribute('aria-label','搜索成果');
     const categories={results:['ResultRecord','EvidenceMapEntry','ArtifactRecord'],process:['RunRecord','ValidationReport','ValidationPlan'],basis:['ModelSpec','ParameterSet','ProblemContract','DataContract','CodeManifest','RulesLock'],all:null};
     const update=()=>{const query=filters.query.trim().toLocaleLowerCase(),kindsFilter=categories[filters.category];const found=objects().filter(o=>(filters.scope==='all'||o.is_current!==false)&&(!kindsFilter||kindsFilter.includes(o.kind))&&(filters.status==='all'||stateOf(o)===filters.status)&&(!query||[titleOf(o),kinds[o.kind],statusLabel(stateOf(o),o),questionOf(o,view.objects),idOf(o)].join(' ').toLocaleLowerCase().includes(query)));
@@ -384,11 +405,30 @@
     f.append(notice(s.ready?'已具备待提交条件':'正式提交条件尚未满足',s.ready?'请按比赛要求完成实际提交，并保留提交回执。':'已生成、已检查和已提交分别记录，请按下面的实际情况推进。',s.ready?'info':'neutral'));
     if(s.blockers.length)f.append(put(section('还需要完成'),blockers(s.blockers)));
     const all=currentObjects(view),sections=all.filter(o=>o.kind==='PaperSection');if(sections.length)f.append(put(section('论文章节'),objectTable(sections)));
+    const exports=all.filter(o=>o.kind==='ArtifactRecord'&&o.payload?.artifact_type==='paper_export');
+    if(exports.length){const panel=section('正文导出与来源检查');exports.forEach(o=>panel.append(put(el('div','list-item'),objectLink(o,'查看导出文件与来源'),badge(stateOf(o),o),el('p','muted small',stateOf(o)==='stale'?'来源已变化，请重新导出并检查。':o.payload?.source_readback_passed?'Word 的文字、表格与公式已与登记来源读回核对；排版、比赛要求与最终定稿仍须分别检查。':'此文件已由本地转换后端生成；请核对实际排版与内容。'))));f.append(panel);}
     const documents=usableFiles(all.filter(o=>['PaperSection','DeliveryAudit','DeliveryPackage','ArtifactRecord'].includes(o.kind)),p=>/\.(pdf|docx|zip)$/i.test(p));
     if(documents.length){const panel=section('论文与材料文件');documents.forEach(({file,object},i)=>panel.append(fileRow(file,object,i)));f.append(panel);}
     const checks=all.filter(o=>['DeliveryAudit','DeliveryPackage','SubmissionAudit','SubmissionPackage'].includes(o.kind));if(checks.length)f.append(put(section('材料检查记录'),objectTable(checks)));
     if(!sections.length&&!documents.length&&!checks.length)f.append(empty('论文材料还没有登记','完成论文章节或生成文件后，在项目中登记，再回到这里查看。'));
     f.append(put(section('实际提交进展'),badge(s.state),el('p','muted small small-gap','本页展示已有记录，查看页面不会执行提交。')));return f;
+  }
+  function showComparisons() {
+    const groups=view.comparisons||[];if(!groups.length)return null;
+    const comparisonText=value=>plainText(value,String(value??'').replace(opaque,'相关记录'));
+    const panel=section('方案比较');
+    const conditions={time_grid:'时间网格',information:'可用信息',horizon:'预测或决策时域',boundary:'边界条件',commitments:'已作出的承诺',costs:'费用口径',split:'评价数据划分',budget:'实验预算'};
+    groups.forEach(group=>{
+      const block=el('div','comparison-group');
+      block.append(el('h3','',`${questionLabel(group.question)} · ${comparisonText(group.title)||'已登记的方案比较'}`),el('p','muted small',group.comparable?'当前已核验指标的登记条件一致，可以在本次检查范围内比较。':'暂不能直接比较；请先核对条件或补齐当前有效的检查。'));
+      if(group.reasons?.length){const reasons=group.reasons.map(reason=>String(reason).replace(/比较条件不同：(\w+)/,(_,key)=>`比较条件不同：${conditions[key]||key}`).replace('比较来源、单位或方向不同：source_files','比较使用的数据来源不同').replace('比较来源、单位或方向不同：unit','指标单位不同').replace('比较来源、单位或方向不同：direction','指标比较方向不同'));block.append(blockers(reasons));}
+      block.append(listRows((group.rows||[]).map(row=>[
+        put(el('div'),el('strong','',comparisonText(row.label)),el('p','muted small',hasChinese(row.method)?comparisonText(row.method):'方法说明保留在比较条件中')),
+        row.value===null?'未取得指标':String(row.value),row.unit||'尚未声明',badge(row.status),
+        put(el('div','small-gap'),objectLink(byId(row.result_id),'查看计算与检查依据'),disclosure('比较条件与策略',...Object.entries(row.context||{}).map(([key,value])=>put(el('p'),el('strong','',`${conditions[key]||key}：`),el('span','',comparisonText(value)))),el('p','small',`方法：${comparisonText(row.method)}；后端：${comparisonText(row.backend)}；指标${row.direction==='lower'?'越小越好':'越大越好'}。`),objectLink(byId(row.model_id),'查看条件的登记来源')))
+      ]),['方案','指标值','声明单位','检查状态','依据与比较条件']));
+      block.append(el('p','muted small small-gap',comparisonText(group.scope)));panel.append(block);
+    });return panel;
   }
   function changeDescription(x,records={},tasks={}) {
     const reason=String(x.reason||x.summary||x.action||'');
@@ -464,6 +504,8 @@
   function toast(text) {$('toast').textContent=text;setTimeout(()=>{$('toast').textContent='';},2500);}
   function numericSources(o) {
     const panel=disclosure('数字来源与检查依据',el('p','muted small','数字可与已登记结果对应，不表示自然语言推论、因果关系或全局最优已获证明。名称和单位是模型声明，仍需领域检查。'));
+    const request=metricHelpRequest(o);
+    if(request){const help=disclosure('指标说明不完整，如何补充？',el('p','muted small','将下面的请求交给 AI，核对含义、单位和适用范围。这里只复制说明，不会在页面中修改模型。'),el('pre','source-content',request));help.append(button('复制补充说明请求',()=>{if(!navigator.clipboard?.writeText){toast('当前浏览器不支持直接复制，请选取上方文字。');return;}navigator.clipboard.writeText(request).then(()=>toast('已复制，粘贴到当前 AI 对话即可。')).catch(()=>toast('复制未成功，请选取上方文字。'));},'button quiet'));panel.append(help);}
     if(o.is_current===false)panel.append(notice('这是旧版本','下列来源只用于回看，不能当作当前可用的结果。','neutral'));
     else if(errorsOf(o).length||stateOf(o)==='stale')panel.append(notice('当前依据需要重检','依据或文件已经变化，请完成检查后再使用这些数字。'));
     const results=new Map();
@@ -538,7 +580,9 @@
   function openDetail(o,source,back=false,preserve=false) {
     if(loading&&!preserve){toast('正在重新核对，请稍候再打开记录。');return;}
     const d=$('detail');if(!d.open){opener=source;detailStack=[];}if(!back)detailStack.push(o);const container=$('detail-body');container.replaceChildren();const header=el('h1','',titleOf(o));header.id='detail-heading';put(container,badge(stateOf(o),o),header,el('p','detail-summary',stateHint(o)));
-    if(errorsOf(o).length)container.append(put(section('需要处理'),blockers(errorsOf(o))));detailFacts(container,o);
+    const guide=recheckGuide(o,view);
+    if(guide){const panel=section('为什么需要重新检查');if(guide.causes.length)guide.causes.forEach(cause=>panel.append(put(el('div','list-item'),el('p','',cause.message),put(el('div','row-inline small-gap'),resolve(cause.id),cause.latest?objectLink(byId(cause.latest),'查看更新后的依据'):null))));else panel.append(el('p','muted small','当前记录未通过有效性检查，具体原因见下方诊断；这里不推断未确认的根因。'));panel.append(el('p','',guide.next));if(guide.downstream.length)panel.append(disclosure('哪些后续内容使用了它',...guide.downstream.map(resolve)));container.append(panel);}
+    if(errorsOf(o).length)container.append(guide?.causes.length?disclosure(`查看全部重检诊断（${errorsOf(o).length} 条）`,blockers(errorsOf(o))):put(section('需要处理'),blockers(errorsOf(o))));detailFacts(container,o);
     const relation=(title,items,lookup)=>{if(!items?.length)return;const chain=el('div','chain');items.forEach(id=>chain.append(lookup(id)));container.append(disclosure(title,chain));};
     if(o.kind==='Task'){relation('先完成的任务',o.depends_on,id=>view.tasks[id]?objectLink(taskObject(view.tasks[id])):el('span','muted','前置任务尚未读取到'));relation('这项任务的产出',o.outputs,resolve);}
     relation('依据哪些内容',o.dependencies,resolve);relation('哪些内容用到了它',objects().filter(x=>(x.dependencies||[]).includes(idOf(o))&&x.is_current!==false).map(idOf),resolve);

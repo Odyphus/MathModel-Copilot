@@ -49,6 +49,22 @@ class InstallationV020Tests(unittest.TestCase):
         self.assertEqual(authority.read_bytes(), before)
         self.assertFalse(json.loads(status.stdout)["result"]["submission"]["ready"])
 
+    def test_standard_library_doctor_distinguishes_optional_dependency_from_installation(self):
+        env = {key: value for key, value in os.environ.items() if key not in {"PYTHONPATH", "PYTHONHOME"}}
+        probe = subprocess.run([sys.executable, "-X", "utf8", "-B", "-S", str(ROOT / "scripts/doctor.py"),
+                                "--competition", "cumcm", "--skip-tools", "--json"],
+                               env=env, capture_output=True, text=True, encoding="utf-8", timeout=30)
+        self.assertEqual(verifier.doctor_outcome(probe.returncode, probe.stdout), "unverified_optional_yaml")
+
+    def test_missing_yaml_cannot_hide_a_broken_package_or_invalid_doctor_response(self):
+        checks = [{"name": name, "status": "fail"} for name in
+                  ("frontmatter-dependency", "skill-metadata", "stage-frontmatter")]
+        checks.append({"name": "package-structure", "status": "fail"})
+        self.assertEqual(verifier.doctor_outcome(1, json.dumps(checks)), "fail")
+        for code, body in ((2, json.dumps(checks[:3])), (1, "[]"), (1, "not JSON"),
+                           (0, json.dumps(checks[:3])), (1, json.dumps(checks[:3] + checks[:1]))):
+            self.assertEqual(verifier.doctor_outcome(code, body), "fail")
+
     def test_allowlist_preserves_resources_and_excludes_official_assets(self):
         names = {path.as_posix() for path in selected_files(ROOT, payload=True)}
         for name in ("scripts/copilot.py", "competitions/cumcm/pack.json", "templates/shared/decision_log.json",
@@ -165,9 +181,11 @@ class InstallationV020Tests(unittest.TestCase):
         self.assertEqual(metadata["maintainer"], "Odyphus")
         self.assertEqual(metadata["repository"], "https://github.com/Odyphus/MathModel-Copilot")
         self.assertEqual(metadata["repository_visibility"], "public")
-        self.assertTrue(metadata["published"])
-        self.assertEqual(metadata["status"], "public_github_preview")
-        self.assertEqual(metadata["distribution_scope"], "public_github_preview")
+        self.assertFalse(metadata["published"])
+        self.assertEqual(metadata["status"], "local_development_candidate")
+        self.assertEqual(metadata["distribution_scope"], "local_review_only")
+        self.assertTrue(metadata["development_base_published"])
+        self.assertEqual(metadata["development_baseline"], "0.3.0-preview.2")
         self.assertNotIn("author", plugin)
         self.assertEqual(plugin["name"], "mathmodel-copilot")
         self.assertFalse((ROOT / "skills/mathmodel-skill/SKILL.md").exists())

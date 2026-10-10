@@ -4,6 +4,7 @@ import hashlib
 import http.client
 import json
 import os
+import socket
 from pathlib import Path
 import sys
 import tempfile
@@ -87,6 +88,30 @@ class TutorialHttpTests(unittest.TestCase):
             self.assertEqual(code, 200)
             self.assertTrue(json.loads(raw)["result"]["read_only"])
             self.assertEqual(headers["Cache-Control"], "no-store")
+        self.assertFalse(self.workspace.exists())
+        self.assertFalse(self.personal.exists())
+
+    def test_static_resource_burst_survives_a_delayed_accept_loop(self):
+        server = make_server(self.workspace, port=0)
+        clients = []; thread = None
+        try:
+            # A page has six independent JS/CSS files plus concurrent reads.
+            # Accept is deliberately delayed to reproduce the old backlog loss.
+            for _ in range(8):
+                clients.append(socket.create_connection(server.server_address, timeout=1))
+            thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+            for client in clients:
+                client.settimeout(5)
+                con = http.client.HTTPConnection(*server.server_address, timeout=5); con.sock = client
+                con.request("GET", "/help.js")
+                response = con.getresponse(); body = response.read()
+                self.assertEqual(response.status, 200)
+                self.assertIn(b"createController", body)
+                con.close()
+        finally:
+            for client in clients: client.close()
+            if thread is not None: server.shutdown(); thread.join(2)
+            server.server_close()
         self.assertFalse(self.workspace.exists())
         self.assertFalse(self.personal.exists())
 

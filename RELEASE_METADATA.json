@@ -1,7 +1,7 @@
 {
   "product": "MathModel Copilot",
-  "version": "0.3.0-preview.2",
-  "python_distribution_version": "0.3.0rc2",
+  "version": "0.3.0-preview.3.dev4",
+  "python_distribution_version": "0.3.0rc3.dev4",
   "status": "public_github_preview",
   "maintainer": "Odyphus",
   "repository": "https://github.com/Odyphus/MathModel-Copilot",
@@ -35,12 +35,16 @@
     "Optional interpretation objects and dependent validation through existing Store transactions",
     "Read-only factual completion reports and numeric source projections; no second authority",
     "Private experience schema 1 and GitHub feedback receipts outside the project; no authority schema migration",
-    "Optional GitHub team setup without Store, local Git configuration or workspace upload changes"
+    "Optional GitHub team setup without Store, local Git configuration or workspace upload changes",
+    "Optional DataContract adapter binding with table spec schema 1.0; source, normalized data and report tracked in existing inventory",
+    "Optional ModelSpec comparison declaration through existing Store; causal forecast and native paper export artifacts use current dependencies without schema migration"
   ],
   "preview_preparation_requested_on": "2026-10-07",
-  "development_baseline": "0.2.0-preview.2",
+  "development_baseline": "0.3.0-preview.2",
+  "development_base_git_commit": "ca019479db480d7f74f3deda3b9319a1509f8c35",
+  "development_base_published": true,
   "repository_visibility": "public",
   "repository_created_on": "2026-10-07",
-  "public_preview_update_requested_on": "2026-10-07",
-  "publication_scope": "Owner-authorized public GitHub Preview; not a completed rights clearance or stable release acceptance"
+  "public_preview_update_requested_on": "2026-10-10",
+  "publication_scope": "Owner-authorized public GitHub Preview update of the tested dev4 candidate; existing rights and unverified external workflow limits retained, not stable release acceptance"
 }

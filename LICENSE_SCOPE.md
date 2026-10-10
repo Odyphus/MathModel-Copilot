@@ -1,6 +1,6 @@
 # License scope and release block
 
-This v0.3.0-preview.2 candidate is available from the public Odyphus/MathModel-Copilot repository at the owner's request. Public accessibility records the actual distribution state; it does **not** establish a blanket redistribution license or complete rights clearance for every migrated component.
+This v0.3.0-preview.3.dev4 candidate is available from the public Odyphus/MathModel-Copilot repository at the owner's request. Public accessibility records the actual distribution state; it does **not** establish a blanket redistribution license or complete rights clearance for every migrated component.
 
 `LICENSE` preserves the upstream MIT notice exactly. It covers material inherited from `handsomeZR-netizen/mathmodel-skill`, v6.2.0, commit `e0e65c8c56f1f0435fb76e99490dbae7c2704d59`, under that upstream grant. It does not grant rights in separately migrated code, competition assets or third-party data.
 

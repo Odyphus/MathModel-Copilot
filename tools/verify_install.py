@@ -32,6 +32,25 @@ def safe_member(name):
     return value
 
 
+def doctor_outcome(returncode, stdout):
+    """Keep missing optional YAML separate from broken installed resources."""
+    try:
+        checks = json.loads(stdout)
+    except (ValueError, TypeError):
+        return "fail"
+    if (not isinstance(checks, list) or not checks
+            or any(not isinstance(item, dict) or not isinstance(item.get("name"), str)
+                   or item.get("status") not in {"pass", "warn", "fail"} for item in checks)
+            or len({item["name"] for item in checks}) != len(checks)):
+        return "fail"
+    failed = {item["name"] for item in checks if item["status"] == "fail"}
+    if returncode == 0 and not failed:
+        return "pass"
+    if returncode == 1 and failed == {"frontmatter-dependency", "skill-metadata", "stage-frontmatter"}:
+        return "unverified_optional_yaml"
+    return "fail"
+
+
 def unpack_review(archive_path: Path, destination: Path):
     """Check the full member set and every byte before extracting regular files."""
     with zipfile.ZipFile(archive_path) as archive:
@@ -145,10 +164,11 @@ def verify(output: Path, work: Path, archive_path: Path | None = None, virtualen
             raise
         (output / (name + ".stdout.log")).write_text(completed.stdout, encoding="utf-8")
         (output / (name + ".stderr.log")).write_text(completed.stderr, encoding="utf-8")
+        accepted = completed.returncode in expected if isinstance(expected, tuple) else completed.returncode == expected
         report["checks"].append({"name": name, "argv": [str(x) for x in argv], "returncode": completed.returncode,
                                  "expected_returncode": expected, "duration_seconds": round(time.monotonic() - start, 3),
-                                 "status": "pass" if completed.returncode == expected else "fail"})
-        if completed.returncode != expected:
+                                 "status": "pass" if accepted else "fail"})
+        if not accepted:
             raise RuntimeError(name + " failed; see its log")
         return completed
 
@@ -196,12 +216,23 @@ def verify(output: Path, work: Path, archive_path: Path | None = None, virtualen
             run("runtime-view", command + ["view"])
             run("runtime-host", command + ["host"])
             check("runtime-read-only-authority", before == (project / "state/decision_log.json").read_bytes())
+            unverified = []
             for competition in ("cumcm", "mcm", "diangong"):
-                run("runtime-doctor-" + competition, [sys.executable, "-B", resource / "scripts/doctor.py", "--competition", competition, "--skip-tools"])
+                name = "runtime-doctor-" + competition
+                probe = run(name, [sys.executable, "-B", resource / "scripts/doctor.py", "--competition", competition, "--skip-tools", "--json"], expected=(0, 1))
+                outcome = doctor_outcome(probe.returncode, probe.stdout)
+                if outcome == "unverified_optional_yaml":
+                    report["checks"][-1].update(status="skip", reason="Optional PyYAML missing; Skill/Stage metadata remains unverified. Other resource checks passed.")
+                    unverified.append(name)
+                elif outcome != "pass":
+                    report["checks"][-1]["status"] = "fail"
+                    raise RuntimeError(name + " found an installed resource error; see its log")
             run("runtime-no-overwrite", [sys.executable, "-B", resource / "tools/install_skill.py", "--directory", skills], expected=2)
             check("runtime-install-preserved", verified_runtime_layout(resource))
             check("runtime-unpacked-bytes-preserved", inventory(source, profile="runtime") == files)
-            report.update(status="pass", workspace_preserved=True)
+            report.update(status="partial_pass" if unverified else "pass", workspace_preserved=True,
+                          installation_passed=True, metadata_validation_complete=not unverified,
+                          unverified_checks=unverified)
             return report
         report["build_tools"] = {name: importlib.metadata.version(name) for name in ("build", "setuptools", "wheel")}
         run("build", [sys.executable, "-B", "-m", "build", "--no-isolation", "--wheel", "--sdist", "--outdir", work / "dist", source])
@@ -341,4 +372,4 @@ if __name__ == "__main__":
     except (ValueError, FileExistsError) as exc:
         parser.exit(2, str(exc) + "\n")
     print(json.dumps(result, ensure_ascii=False, indent=2))
-    raise SystemExit(0 if result["status"] == "pass" else 1)
+    raise SystemExit(0 if result["status"] in {"pass", "partial_pass"} else 1)

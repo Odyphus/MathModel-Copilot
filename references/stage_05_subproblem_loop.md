@@ -33,6 +33,10 @@ next: stage_06_robustness
 
 ## 输入
 
+选用优化/回归 starter 时，分别按需加载 [优化方法卡](methods/linear_optimization.md) 和 [回归方法卡](methods/regression.md)。先做已知解或解析小例，再接当前数据的真实运行与独立检查；模板内部“可行”标记不能替代项目 verified Result。
+
+涉及时间序列预测时，按需读 [滚动预测方法卡](methods/rolling_forecast.md)，明确观测与发布时间并和同窗口简单基线比较。需要一致性检查时读 [条件桥梁](methods/equivalence_bridge.md)，不能把承诺、费用或边界不同的模型直接判为等价。
+
 - stage 2 子问题卡片
 - stage 3 选定模型 + toy demo 通过
 - stage 4 假设/符号/术语

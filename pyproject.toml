@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mathmodel-copilot"
-version = "0.3.0rc2"
+version = "0.3.0rc3.dev4"
 description = "Local evidence-based mathematical modeling workflow; review candidate"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -20,6 +20,7 @@ mathmodel-copilot = "mathmodel_copilot.cli:main"
 yaml = ["PyYAML>=6.0"]
 documents = ["python-docx>=1.1", "pypdf>=5.0", "reportlab>=4.0", "Pillow>=10.0"]
 analysis = ["numpy>=1.24", "scipy>=1.10", "pandas>=2.0", "openpyxl>=3.1", "matplotlib>=3.7", "seaborn>=0.12", "scikit-learn>=1.3"]
+advanced = ["cvxpy>=1.4", "statsmodels>=0.14"]
 historical = ["xlrd>=2.0", "xlwt>=1.3"]
 test = ["PyYAML>=6.0", "unidiff>=0.7", "numpy>=1.24", "scipy>=1.10", "pandas>=2.0", "openpyxl>=3.1", "matplotlib>=3.7", "seaborn>=0.12", "scikit-learn>=1.3", "python-docx>=1.1", "pypdf>=5.0", "reportlab>=4.0", "Pillow>=10.0"]
 maintenance = ["pdfplumber>=0.10", "requests>=2.31", "beautifulsoup4>=4.12", "Pillow>=10.0", "playwright>=1.45"]
